@@ -1,0 +1,45 @@
+<div class="student-dashboard">
+  <div class="dashboard-header">
+    <div class="user-info">
+      <h1>Welcome, {{ getFullName() }}!</h1>
+      <p class="user-type">Student Dashboard</p>
+    </div>
+    <button class="logout-button" (click)="logout()" [disabled]="isLoading">
+      {{ isLoading ? 'Logging out...' : 'Logout' }}
+    </button>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="welcome-card">
+      <h2>Ready to Learn Chess?</h2>
+      <p>Join a lesson with your instructor and start playing chess together!</p>
+      
+      <div class="action-buttons">
+        <button class="join-lesson-button" (click)="joinLesson()">
+          <span class="button-icon">🎓</span>
+          Join a Lesson
+        </button>
+      </div>
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="card-icon">♟️</div>
+        <h3>Interactive Chess</h3>
+        <p>Play chess in real-time with your instructor using our interactive board.</p>
+      </div>
+
+      <div class="info-card">
+        <div class="card-icon">📹</div>
+        <h3>Video Call</h3>
+        <p>See and talk to your instructor during the lesson for better learning.</p>
+      </div>
+
+      <div class="info-card">
+        <div class="card-icon">🎯</div>
+        <h3>Real-time Moves</h3>
+        <p>All moves are synchronized instantly between you and your instructor.</p>
+      </div>
+    </div>
+  </div>
+</div>

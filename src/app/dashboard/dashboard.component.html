@@ -1,0 +1,40 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Chess Dashboard</h1>
+    <div class="user-info">
+      <span>Welcome, {{ getFullName() }}!</span>
+      <button (click)="logout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <!-- Create Game Card (shown when no game is active) -->
+    <div class="create-game-card" *ngIf="!gameActive">
+      <h2>Create a New Game</h2>
+      <p>Start a new chess game and invite an opponent</p>
+      
+      <div class="create-game-form">
+        <button (click)="createGame()" class="create-game-button" [disabled]="isCreating">
+          <span *ngIf="!isCreating">Create Game</span>
+          <span *ngIf="isCreating" class="loading-spinner">
+            <div class="spinner"></div>
+            Creating...
+          </span>
+        </button>
+      </div>
+      
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <!-- Game Interface (shown when game is active) -->
+    <app-chess-game
+      *ngIf="gameActive"
+      [gameId]="gameId"
+      [meetingRoom]="meetingRoom"
+      [gameStatus]="gameStatus"
+      (endGame)="endGame()">
+    </app-chess-game>
+  </main>
+</div>

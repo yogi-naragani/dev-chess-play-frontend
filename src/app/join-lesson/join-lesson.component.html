@@ -1,0 +1,83 @@
+<div class="join-lesson-container">
+  <div class="join-lesson-card">
+    <div class="card-header">
+      <button class="back-button" (click)="goBack()">
+        <span class="back-icon">←</span>
+        Back to Dashboard
+      </button>
+      <h1>Join a Lesson</h1>
+      <p>Select an active session from your instructor</p>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading active sessions...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="errorMessage && !isLoading">
+      <div class="error-message-box">
+        <span class="error-icon">⚠️</span>
+        {{ errorMessage }}
+      </div>
+      <button class="retry-button" (click)="loadActiveSessions()">Retry</button>
+    </div>
+
+    <!-- Sessions List -->
+    <div class="sessions-list" *ngIf="!isLoading && !errorMessage && activeSessions.length > 0">
+      <div 
+        class="session-card" 
+        *ngFor="let session of activeSessions"
+        [class.selected]="selectedSession?.id === session.id"
+        (click)="selectSession(session)">
+        <div class="session-header">
+          <div class="instructor-info">
+            <div class="instructor-icon">👨‍🏫</div>
+            <div class="instructor-details">
+              <h3>{{ getInstructorName(session) }}</h3>
+              <p class="instructor-email">{{ session.instructor.email }}</p>
+            </div>
+          </div>
+          <div class="session-status" [class.status-pending]="session.status === 'pending'">
+            {{ session.status }}
+          </div>
+        </div>
+        
+        <div class="session-details">
+          <div class="detail-item">
+            <span class="detail-label">Session ID:</span>
+            <span class="detail-value">{{ session.id.substring(0, 8) }}...</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Created:</span>
+            <span class="detail-value">{{ formatDate(session.createdAt) }}</span>
+          </div>
+          <div class="detail-item" *ngIf="session.notes">
+            <span class="detail-label">Notes:</span>
+            <span class="detail-value">{{ session.notes }}</span>
+          </div>
+        </div>
+
+        <button 
+          class="join-button"
+          (click)="joinSession(session); $event.stopPropagation()"
+          [disabled]="isLoading">
+          <span *ngIf="isLoading" class="loading-spinner-small"></span>
+          {{ isLoading ? 'Joining...' : 'Join Session' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && !errorMessage && activeSessions.length === 0">
+      <div class="empty-icon">📚</div>
+      <h3>No Active Sessions</h3>
+      <p>There are no active sessions available at the moment.</p>
+      <p>Please ask your instructor to create a session.</p>
+      <button class="retry-button" (click)="loadActiveSessions()">Refresh</button>
+    </div>
+  </div>
+</div>
