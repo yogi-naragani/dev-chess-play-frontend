@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum UserType {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+}
+
+enum LessonStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum GameResult {
+  WHITE_WIN
+  BLACK_WIN
+  DRAW
+  ABANDONED
+}
+
+enum TournamentStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum TournamentFormat {
+  SWISS
+  ROUND_ROBIN
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id           String     @id @default(uuid())
+  username     String     @unique
+  email        String     @unique
+  password     String
+  firstName    String
+  lastName     String
+  userType     UserType
+  profileImage String?
+  rating       Int        @default(1200)
+  puzzleRating Int        @default(1200)
+  status       UserStatus @default(OFFLINE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Instructor relations
+  instructorLessons Lesson[]          @relation("InstructorLessons")
+  uploadedVideos    Video[]           @relation("UploadedBy")
+  assignmentsGiven  Assignment[]      @relation("AssignedBy")
+
+  // Student relations
+  enrolledLessons   LessonStudent[]
+  gamesAsWhite      Game[]            @relation("WhitePlayer")
+  gamesAsBlack      Game[]            @relation("BlackPlayer")
+  submissions       Submission[]
+  tournamentEntries TournamentEntry[]
+
+  // Instructor-Student relationship
+  instructorOf      InstructorStudent[] @relation("InstructorOf")
+  studentOf         InstructorStudent[] @relation("StudentOf")
+
+  @@map("users")
+}
+
+model InstructorStudent {
+  id           String   @id @default(uuid())
+  instructorId String
+  studentId    String
+  instructor   User     @relation("InstructorOf", fields: [instructorId], references: [id], onDelete: Cascade)
+  student      User     @relation("StudentOf", fields: [studentId], references: [id], onDelete: Cascade)
+  assignedAt   DateTime @default(now())
+
+  @@unique([instructorId, studentId])
+  @@map("instructor_students")
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  level       String   // beginner, intermediate, advanced
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons Lesson[]
+
+  @@map("courses")
+}
+
+model Lesson {
+  id            String       @id @default(uuid())
+  title         String
+  description   String?
+  scheduledAt   DateTime
+  duration      Int          // minutes
+  meetingRoomId String?      // Daily.co room ID
+  meetingUrl    String?      // Daily.co room URL
+  status        LessonStatus @default(SCHEDULED)
+  instructorId  String
+  courseId       String?
+
+  instructor User           @relation("InstructorLessons", fields: [instructorId], references: [id], onDelete: Cascade)
+  course     Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  students   LessonStudent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("lessons")
+}
+
+model LessonStudent {
+  id        String  @id @default(uuid())
+  lessonId  String
+  studentId String
+  attended  Boolean @default(false)
+
+  lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, studentId])
+  @@map("lesson_students")
+}
+
+model Game {
+  id           String      @id @default(uuid())
+  whiteId      String
+  blackId      String
+  pgn          String?
+  fen          String?     // Final position
+  result       GameResult?
+  timeControl  Int         // seconds per player
+  ratingChange Int?        // +/- rating change
+  tournamentId String?
+  isRated      Boolean     @default(true)
+
+  white      User        @relation("WhitePlayer", fields: [whiteId], references: [id], onDelete: Cascade)
+  black      User        @relation("BlackPlayer", fields: [blackId], references: [id], onDelete: Cascade)
+  tournament Tournament? @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("games")
+}
+
+model Video {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  filePath     String
+  thumbnailUrl String?
+  category     String
+  level        String   // beginner, intermediate, advanced
+  duration     Int?     // seconds
+  fileSize     Int?     // bytes
+  mimeType     String?
+  uploadedById String
+
+  uploadedBy User @relation("UploadedBy", fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("videos")
+}
+
+model Assignment {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  type         String   // solve_position, watch_video, review_game, custom
+  data         Json     // Flexible: { fen, videoId, gameId, questions, etc. }
+  dueDate      DateTime
+  assignedById String
+  courseId      String?
+
+  assignedBy  User         @relation("AssignedBy", fields: [assignedById], references: [id], onDelete: Cascade)
+  submissions Submission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("assignments")
+}
+
+model Submission {
+  id           String   @id @default(uuid())
+  assignmentId String
+  studentId    String
+  answer       Json     // Flexible: { moves, text, fileUrl, etc. }
+  grade        Int?     // 0-100
+  feedback     String?
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  submittedAt DateTime @default(now())
+  gradedAt    DateTime?
+
+  @@unique([assignmentId, studentId])
+  @@map("submissions")
+}
+
+model Tournament {
+  id          String           @id @default(uuid())
+  name        String
+  description String?
+  format      TournamentFormat
+  timeControl Int              // seconds per player
+  maxPlayers  Int
+  status      TournamentStatus @default(UPCOMING)
+  startDate   DateTime
+  endDate     DateTime?
+  rounds      Json?            // Pairing data: [{ round, pairings: [{white, black, result}] }]
+  currentRound Int             @default(0)
+
+  entries TournamentEntry[]
+  games   Game[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tournaments")
+}
+
+model TournamentEntry {
+  id           String @id @default(uuid())
+  tournamentId String
+  userId       String
+  score        Float  @default(0)
+  rank         Int?
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, userId])
+  @@map("tournament_entries")
+}

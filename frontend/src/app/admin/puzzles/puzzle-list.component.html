@@ -1,0 +1,103 @@
+<div class="puzzle-list">
+  <div class="page-header">
+    <h1>Puzzles</h1>
+    <button mat-raised-button color="primary" (click)="addPuzzle()">
+      <mat-icon>add</mat-icon>
+      Add Puzzle
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <!-- Filters -->
+      <div class="filters">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Category</mat-label>
+          <mat-select [(value)]="categoryFilter" (selectionChange)="onFilterChange()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Theme</mat-label>
+          <mat-select [(value)]="themeFilter" (selectionChange)="onFilterChange()">
+            <mat-option value="">All Themes</mat-option>
+            <mat-option *ngFor="let theme of themes" [value]="theme">{{ theme }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="dataSource" class="full-width">
+          <ng-container matColumnDef="rating">
+            <th mat-header-cell *matHeaderCellDef>Rating</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="rating-badge" [style.color]="getRatingColor(row.rating)">
+                {{ row.rating }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Category</th>
+            <td mat-cell *matCellDef="let row">{{ row.category }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="themes">
+            <th mat-header-cell *matHeaderCellDef>Themes</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-chip-set>
+                <mat-chip *ngFor="let theme of row.themes?.slice(0, 3)" class="small-chip">{{ theme }}</mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="solutionMoves">
+            <th mat-header-cell *matHeaderCellDef>Solution Moves</th>
+            <td mat-cell *matCellDef="let row">{{ row.solutionMoves?.length || 0 }} moves</td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Created</th>
+            <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'mediumDate' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="primary" (click)="editPuzzle(row)" matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deletePuzzle(row)" matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div *ngIf="dataSource.data.length === 0" class="empty-state">
+          <mat-icon>extension</mat-icon>
+          <p>No puzzles found</p>
+        </div>
+
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

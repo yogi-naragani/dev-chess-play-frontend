@@ -1,0 +1,15 @@
+import { FastifyRequest, FastifyReply } from 'fastify';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    requireRole: (...roles: string[]) => (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+  }
+}
+
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    payload: { id: string; username: string; userType: string };
+    user: { id: string; username: string; userType: string };
+  }
+}

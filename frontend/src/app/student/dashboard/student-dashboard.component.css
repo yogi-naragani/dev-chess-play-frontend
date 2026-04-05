@@ -1,0 +1,160 @@
+.dashboard-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-card {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+  color: white;
+}
+
+.welcome-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.welcome-text h1 {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.welcome-text .subtitle {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 16px;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 12px 24px;
+  border-radius: 12px;
+}
+
+.rating-display mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #ffd740;
+}
+
+.rating-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rating-label {
+  display: block;
+  font-size: 12px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.puzzle-card app-chess-board {
+  max-width: 280px;
+  margin: 12px auto;
+}
+
+.empty-state {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+  padding: 24px 0;
+  font-style: italic;
+}
+
+.result-badge {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.result-win {
+  color: #2e7d32;
+}
+
+.result-loss {
+  color: #c62828;
+}
+
+.result-draw {
+  color: #f57f17;
+}
+
+.result-badge.result-win {
+  background: #e8f5e9;
+}
+
+.result-badge.result-loss {
+  background: #ffebee;
+}
+
+.result-badge.result-draw {
+  background: #fff8e1;
+}
+
+.completed-chip {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.pending-chip {
+  background-color: #fff3e0 !important;
+  color: #e65100 !important;
+}
+
+.status-scheduled {
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+.status-in_progress {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+mat-card-actions {
+  padding: 8px 16px !important;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+
+  .welcome-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

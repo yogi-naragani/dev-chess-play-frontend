@@ -1,0 +1,111 @@
+<div class="lobby-container">
+  <div class="page-header">
+    <h1>Game Lobby</h1>
+  </div>
+
+  <div class="lobby-grid">
+    <!-- Play vs Computer -->
+    <mat-card class="action-card computer-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>computer</mat-icon>
+        <mat-card-title>Play vs Computer</mat-card-title>
+        <mat-card-subtitle>Practice against Stockfish engine</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Choose your difficulty and color, then play against the computer.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="playComputer()">
+          <mat-icon>play_arrow</mat-icon> Play Now
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Quick Match -->
+    <mat-card class="action-card queue-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>flash_on</mat-icon>
+        <mat-card-title>Quick Match</mat-card-title>
+        <mat-card-subtitle>Find a random opponent</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="tc-select">
+          <mat-label>Time Control</mat-label>
+          <mat-select [(ngModel)]="queueTimeControl">
+            <mat-option *ngFor="let tc of timeControls" [value]="tc">{{ tc }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="accent"
+                (click)="joinQueue()"
+                [disabled]="inQueue">
+          <mat-icon>{{ inQueue ? 'hourglass_top' : 'search' }}</mat-icon>
+          {{ inQueue ? 'Searching...' : 'Find Match' }}
+        </button>
+        <button mat-button *ngIf="inQueue" (click)="leaveQueue()">Cancel</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Online Students -->
+    <mat-card class="online-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>people</mat-icon>
+        <mat-card-title>Online Students</mat-card-title>
+        <mat-card-subtitle>{{ onlineStudents.length }} online</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="loading" class="inline-loading">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <mat-list *ngIf="!loading && onlineStudents.length > 0">
+          <mat-list-item *ngFor="let student of onlineStudents">
+            <mat-icon matListItemIcon [class]="student.status === 'online' ? 'online-dot' : 'ingame-dot'">
+              circle
+            </mat-icon>
+            <div matListItemTitle>{{ student.username }}</div>
+            <div matListItemLine>Rating: {{ student.rating }} | {{ student.status }}</div>
+            <button matListItemMeta mat-stroked-button color="primary"
+                    (click)="challengeStudent(student)"
+                    [disabled]="student.status === 'in-game'">
+              Challenge
+            </button>
+          </mat-list-item>
+        </mat-list>
+
+        <div *ngIf="!loading && onlineStudents.length === 0" class="empty-state">
+          <p>No students online right now.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Recent / Active Games -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>history</mat-icon>
+        <mat-card-title>Recent Games</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="recentGames.length > 0; else noGames">
+          <mat-list-item *ngFor="let game of recentGames">
+            <div matListItemTitle>
+              {{ game.whitePlayer.username }} vs {{ game.blackPlayer.username }}
+            </div>
+            <div matListItemLine>
+              {{ game.timeControl }} | {{ getResultText(game) | titlecase }}
+            </div>
+            <button matListItemMeta mat-button
+                    *ngIf="game.status === 'active'"
+                    [routerLink]="['/student/play/game', game.id]">
+              Resume
+            </button>
+          </mat-list-item>
+        </mat-list>
+        <ng-template #noGames>
+          <p class="empty-state">No recent games.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

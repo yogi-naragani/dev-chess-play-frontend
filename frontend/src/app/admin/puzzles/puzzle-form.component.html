@@ -1,0 +1,94 @@
+<div class="puzzle-form">
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Edit Puzzle' : 'Create Puzzle' }}</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="editor-layout">
+    <!-- Left: Board Preview -->
+    <div class="board-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Position Preview</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="board-wrapper">
+            <app-chess-board
+              [mode]="'view-only'"
+              [fen]="previewFen">
+            </app-chess-board>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="form-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Puzzle Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>FEN Position</mat-label>
+              <input matInput formControlName="fen" placeholder="e.g. rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1">
+              <mat-hint>Enter a valid FEN string to set the puzzle position</mat-hint>
+              <mat-error *ngIf="form.get('fen')?.hasError('required')">FEN is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Solution Moves</mat-label>
+              <input matInput [(ngModel)]="solutionMovesInput" [ngModelOptions]="{standalone: true}"
+                     placeholder="e.g. e4 e5 Nf3 Nc6">
+              <mat-hint>Space-separated moves in algebraic notation</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('category')?.hasError('required')">Category is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Difficulty Rating</mat-label>
+              <input matInput type="number" formControlName="rating" placeholder="1200">
+              <mat-hint>100 - 3000</mat-hint>
+              <mat-error *ngIf="form.get('rating')?.hasError('required')">Rating is required</mat-error>
+              <mat-error *ngIf="form.get('rating')?.hasError('min') || form.get('rating')?.hasError('max')">Must be between 100 and 3000</mat-error>
+            </mat-form-field>
+
+            <!-- Themes Multi-Select -->
+            <div class="themes-section">
+              <h3>Themes</h3>
+              <mat-chip-set class="theme-chips">
+                <mat-chip *ngFor="let theme of allThemes"
+                          [highlighted]="isThemeSelected(theme)"
+                          (click)="toggleTheme(theme)"
+                          class="selectable-chip">
+                  {{ theme }}
+                </mat-chip>
+              </mat-chip-set>
+              <p class="themes-hint" *ngIf="selectedThemes.length > 0">
+                Selected: {{ selectedThemes.join(', ') }}
+              </p>
+            </div>
+
+            <div class="form-actions">
+              <button mat-button type="button" (click)="cancel()">Cancel</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving">
+                <mat-spinner *ngIf="saving" diameter="20" class="button-spinner"></mat-spinner>
+                {{ isEditMode ? 'Update' : 'Create' }} Puzzle
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

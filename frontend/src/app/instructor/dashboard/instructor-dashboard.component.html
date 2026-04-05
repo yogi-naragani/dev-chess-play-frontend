@@ -1,0 +1,102 @@
+<div class="dashboard-container">
+  <h1 class="page-title">Instructor Dashboard</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Stat Cards -->
+    <div class="stats-row">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon student-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.studentCount }}</span>
+            <span class="stat-label">Students</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon lesson-icon">
+            <mat-icon>event</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.upcomingLessons }}</span>
+            <span class="stat-label">Upcoming Lessons</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon homework-icon">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.pendingHomework }}</span>
+            <span class="stat-label">Pending Homework</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-row">
+      <!-- Upcoming Lessons -->
+      <mat-card class="content-card lessons-card">
+        <mat-card-header>
+          <mat-card-title>Upcoming Lessons</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="upcomingLessons.length === 0" class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <p>No upcoming lessons scheduled</p>
+            <button mat-raised-button color="primary" routerLink="/instructor/lessons/new">
+              Schedule Lesson
+            </button>
+          </div>
+          <mat-list *ngIf="upcomingLessons.length > 0">
+            <mat-list-item *ngFor="let lesson of upcomingLessons" class="lesson-item">
+              <mat-icon matListItemIcon>school</mat-icon>
+              <div matListItemTitle>{{ lesson.title }}</div>
+              <div matListItemLine>
+                {{ lesson.date | date:'MMM d, y' }} at {{ lesson.time }} - {{ lesson.duration }} min
+              </div>
+              <span matListItemMeta class="status-chip" [class]="'status-' + lesson.status">
+                {{ lesson.status | titlecase }}
+              </span>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+        <mat-card-actions *ngIf="upcomingLessons.length > 0">
+          <button mat-button color="primary" routerLink="/instructor/lessons">View All</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Recent Activity -->
+      <mat-card class="content-card activity-card">
+        <mat-card-header>
+          <mat-card-title>Recent Activity</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="recentActivity.length === 0" class="empty-state">
+            <mat-icon>history</mat-icon>
+            <p>No recent activity</p>
+          </div>
+          <mat-list *ngIf="recentActivity.length > 0">
+            <mat-list-item *ngFor="let activity of recentActivity">
+              <mat-icon matListItemIcon>{{ activity.icon }}</mat-icon>
+              <div matListItemTitle>{{ activity.text }}</div>
+              <div matListItemLine>{{ activity.time }}</div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

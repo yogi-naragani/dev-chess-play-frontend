@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* ==================== CSS CUSTOM PROPERTIES ==================== */
+
+:root {
+  /* Light theme (default) */
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-sidebar: #f5f5f5;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-hint: #9e9e9e;
+  --border-color: #e0e0e0;
+  --hover-bg: #f5f5f5;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  /* Chess board */
+  --board-light: #f0d9b5;
+  --board-dark: #b58863;
+  --board-highlight: rgba(255, 255, 0, 0.4);
+  --board-move-hint: rgba(0, 0, 0, 0.15);
+
+  /* Accent colors */
+  --accent-primary: #1976d2;
+  --accent-secondary: #388e3c;
+  --accent-warn: #d32f2f;
+  --accent-info: #0288d1;
+
+  /* Status colors */
+  --online-color: #4caf50;
+  --offline-color: #9e9e9e;
+  --win-color: #4caf50;
+  --loss-color: #f44336;
+  --draw-color: #ff9800;
+}
+
+.dark-theme {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #252525;
+  --bg-sidebar: #1a1a1a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --text-hint: #777777;
+  --border-color: #333333;
+  --hover-bg: #2a2a2a;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  /* Chess board (darker) */
+  --board-light: #c8a97e;
+  --board-dark: #8b6b47;
+  --board-highlight: rgba(255, 255, 0, 0.3);
+
+  /* Accent colors (brighter for dark bg) */
+  --accent-primary: #42a5f5;
+  --accent-secondary: #66bb6a;
+  --accent-warn: #ef5350;
+  --accent-info: #29b6f6;
+}
+
+/* ==================== GLOBAL RESET & TYPOGRAPHY ==================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== SCROLLBAR ==================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-hint);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ==================== MATERIAL OVERRIDES ==================== */
+
+.dark-theme .mat-mdc-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .mat-toolbar {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .mat-mdc-table {
+  background-color: var(--bg-card) !important;
+}
+
+.dark-theme .mat-drawer {
+  background-color: var(--bg-sidebar) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .mat-mdc-dialog-container {
+  background-color: var(--bg-card) !important;
+}
+
+.dark-theme .mat-mdc-form-field {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .mat-mdc-menu-panel {
+  background-color: var(--bg-card) !important;
+}
+
+/* ==================== LAYOUT UTILITIES ==================== */
+
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.stat-card .stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gap-8 { gap: 8px; }
+.gap-16 { gap: 16px; }
+.gap-24 { gap: 24px; }
+
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+
+/* ==================== STATUS BADGES ==================== */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.online {
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--online-color);
+}
+
+.status-badge.offline {
+  background: rgba(158, 158, 158, 0.15);
+  color: var(--offline-color);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.online { background: var(--online-color); }
+.status-dot.offline { background: var(--offline-color); }
+
+/* ==================== CHESS BOARD ==================== */
+
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  max-width: 560px;
+}
+
+.chess-square {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.chess-square.light {
+  background-color: var(--board-light);
+}
+
+.chess-square.dark {
+  background-color: var(--board-dark);
+}
+
+.chess-square.selected {
+  background-color: var(--board-highlight) !important;
+}
+
+.chess-square.move-hint::after {
+  content: '';
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: var(--board-move-hint);
+}
+
+.chess-square:hover {
+  opacity: 0.85;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 12px;
+  }
+
+  .stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chess-square {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-cards {
+    grid-template-columns: 1fr;
+  }
+}

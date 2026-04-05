@@ -1,0 +1,138 @@
+<div class="academy-analytics">
+  <div class="page-header">
+    <h1>Academy Analytics</h1>
+    <button mat-raised-button (click)="loadAnalytics()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && !analytics" class="empty-state">
+    <mat-icon>analytics</mat-icon>
+    <p>Failed to load analytics data</p>
+    <button mat-raised-button color="primary" (click)="loadAnalytics()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && analytics">
+    <!-- Stat Cards -->
+    <div class="stat-cards">
+      <mat-card *ngFor="let card of statCards" class="stat-card">
+        <div class="stat-icon" [style.background-color]="card.color">
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ card.value | number }}</span>
+          <span class="stat-title">{{ card.title }}</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- User Distribution -->
+    <mat-card class="distribution-card">
+      <mat-card-header>
+        <mat-card-title>User Distribution</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="distribution-bars">
+          <div class="distribution-item">
+            <div class="distribution-label">
+              <mat-icon>school</mat-icon>
+              <span>Students</span>
+              <span class="distribution-count">{{ analytics.userDistribution.students }}</span>
+            </div>
+            <div class="distribution-bar-track">
+              <div class="distribution-bar" [style.width.%]="getDistributionPercent(analytics.userDistribution.students)"
+                   style="background-color: #1976d2;"></div>
+            </div>
+            <span class="distribution-percent">{{ getDistributionPercent(analytics.userDistribution.students) }}%</span>
+          </div>
+
+          <div class="distribution-item">
+            <div class="distribution-label">
+              <mat-icon>person</mat-icon>
+              <span>Instructors</span>
+              <span class="distribution-count">{{ analytics.userDistribution.instructors }}</span>
+            </div>
+            <div class="distribution-bar-track">
+              <div class="distribution-bar" [style.width.%]="getDistributionPercent(analytics.userDistribution.instructors)"
+                   style="background-color: #388e3c;"></div>
+            </div>
+            <span class="distribution-percent">{{ getDistributionPercent(analytics.userDistribution.instructors) }}%</span>
+          </div>
+
+          <div class="distribution-item">
+            <div class="distribution-label">
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>Admins</span>
+              <span class="distribution-count">{{ analytics.userDistribution.admins }}</span>
+            </div>
+            <div class="distribution-bar-track">
+              <div class="distribution-bar" [style.width.%]="getDistributionPercent(analytics.userDistribution.admins)"
+                   style="background-color: #f57c00;"></div>
+            </div>
+            <span class="distribution-percent">{{ getDistributionPercent(analytics.userDistribution.admins) }}%</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Charts Placeholder -->
+    <div class="charts-grid">
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Games Played Over Time</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-placeholder">
+            <mat-icon>show_chart</mat-icon>
+            <p>Line chart will be displayed here</p>
+            <span class="placeholder-hint">Integrate with a charting library (e.g., ngx-charts, Chart.js)</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Rating Distribution</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-placeholder">
+            <mat-icon>bar_chart</mat-icon>
+            <p>Bar chart will be displayed here</p>
+            <span class="placeholder-hint">Integrate with a charting library (e.g., ngx-charts, Chart.js)</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Lesson Completion Rate</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-placeholder">
+            <mat-icon>pie_chart</mat-icon>
+            <p>Pie chart will be displayed here</p>
+            <span class="placeholder-hint">Integrate with a charting library (e.g., ngx-charts, Chart.js)</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Puzzle Solve Rate</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-placeholder">
+            <mat-icon>donut_large</mat-icon>
+            <p>Donut chart will be displayed here</p>
+            <span class="placeholder-hint">Integrate with a charting library (e.g., ngx-charts, Chart.js)</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

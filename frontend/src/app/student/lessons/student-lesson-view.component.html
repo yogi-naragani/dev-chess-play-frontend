@@ -1,0 +1,85 @@
+<div class="lesson-view-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Joining lesson...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/lessons">Back to Lessons</button>
+  </div>
+
+  <div *ngIf="!loading && !error && lesson" class="lesson-content">
+    <div class="lesson-header">
+      <button mat-icon-button routerLink="/student/lessons">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ lesson.title }}</h2>
+      <mat-chip class="live-chip" *ngIf="lesson.status === 'in_progress'">LIVE</mat-chip>
+    </div>
+
+    <div class="lesson-layout">
+      <!-- Chess Board -->
+      <div class="board-section">
+        <mat-card>
+          <mat-card-content>
+            <app-chess-board
+              [fen]="currentFen"
+              [mode]="'view-only'"
+              [disabled]="true">
+            </app-chess-board>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Video Section -->
+      <div class="video-section">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Live Video</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="video-placeholder">
+              <mat-icon>videocam</mat-icon>
+              <p>Video stream will appear here</p>
+              <p class="hint">Waiting for instructor to start video...</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Chat Panel -->
+    <mat-card class="chat-section">
+      <mat-card-header>
+        <mat-card-title>Lesson Chat</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chat-messages">
+          <div *ngIf="chatMessages.length === 0" class="no-messages">
+            <p>No messages yet. Say hello!</p>
+          </div>
+          <div *ngFor="let msg of chatMessages" class="chat-message">
+            <strong>{{ msg.sender }}</strong>
+            <span class="msg-time">{{ msg.time | date:'shortTime' }}</span>
+            <p>{{ msg.text }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="chat-input">
+          <mat-form-field appearance="outline" class="chat-field">
+            <input matInput
+                   placeholder="Type a message..."
+                   [(ngModel)]="newMessage"
+                   (keyup.enter)="sendChatMessage()">
+          </mat-form-field>
+          <button mat-icon-button color="primary" (click)="sendChatMessage()">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

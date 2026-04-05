@@ -1,0 +1,60 @@
+<div class="student-list-container">
+  <div class="page-header">
+    <h1>My Students</h1>
+  </div>
+
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search students</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" placeholder="Search by name...">
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && filteredStudents.length === 0" class="empty-state">
+    <mat-icon>people_outline</mat-icon>
+    <p>{{ searchQuery ? 'No students match your search' : 'No students assigned yet' }}</p>
+  </div>
+
+  <div *ngIf="!loading && filteredStudents.length > 0" class="students-grid">
+    <mat-card *ngFor="let student of filteredStudents" class="student-card">
+      <mat-card-content>
+        <div class="student-avatar">
+          {{ getInitials(student.name) }}
+        </div>
+        <h3 class="student-name">{{ student.name }}</h3>
+        <p class="student-username">&#64;{{ student.username }}</p>
+
+        <div class="stats-row">
+          <div class="stat">
+            <mat-icon>trending_up</mat-icon>
+            <div>
+              <span class="stat-value">{{ student.rating }}</span>
+              <span class="stat-label">Rating</span>
+            </div>
+          </div>
+          <div class="stat">
+            <mat-icon>extension</mat-icon>
+            <div>
+              <span class="stat-value">{{ student.puzzleRating }}</span>
+              <span class="stat-label">Puzzle</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="last-active">
+          <mat-icon>schedule</mat-icon>
+          <span>Last active: {{ getLastActiveText(student.lastActive) }}</span>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary"
+                [routerLink]="['/instructor/students', student.id, 'progress']">
+          <mat-icon>insights</mat-icon> View Progress
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

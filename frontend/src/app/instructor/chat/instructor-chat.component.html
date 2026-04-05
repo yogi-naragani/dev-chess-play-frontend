@@ -1,0 +1,97 @@
+<div class="chat-container">
+  <div class="chat-layout">
+    <!-- Contact List -->
+    <div class="contacts-panel">
+      <div class="contacts-header">
+        <h2>Messages</h2>
+      </div>
+
+      <div *ngIf="loadingContacts" class="loading-container">
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+
+      <div *ngIf="!loadingContacts && contacts.length === 0" class="empty-contacts">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>No contacts yet</p>
+      </div>
+
+      <div class="contacts-list" *ngIf="!loadingContacts && contacts.length > 0">
+        <div *ngFor="let contact of contacts"
+             class="contact-item"
+             [class.selected]="selectedContact?.id === contact.id"
+             (click)="selectContact(contact)">
+          <div class="contact-avatar" [class.online]="contact.status === 'online'">
+            {{ getInitials(contact) }}
+          </div>
+          <div class="contact-info">
+            <span class="contact-name">{{ getDisplayName(contact) }}</span>
+            <span class="contact-last-msg">{{ contact.lastMessage || 'No messages' }}</span>
+          </div>
+          <div class="contact-meta">
+            <span *ngIf="contact.unreadCount" class="unread-badge">{{ contact.unreadCount }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Area -->
+    <div class="messages-panel">
+      <div *ngIf="!selectedContact" class="no-chat-selected">
+        <mat-icon>forum</mat-icon>
+        <p>Select a contact to start messaging</p>
+      </div>
+
+      <div *ngIf="selectedContact" class="chat-active">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="chat-header-info">
+            <div class="header-avatar" [class.online]="selectedContact.status === 'online'">
+              {{ getInitials(selectedContact) }}
+            </div>
+            <div>
+              <span class="header-name">{{ getDisplayName(selectedContact) }}</span>
+              <span class="header-status">{{ selectedContact.status === 'online' ? 'Online' : 'Offline' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="messages-area">
+          <div *ngIf="loadingMessages" class="loading-container">
+            <mat-spinner diameter="32"></mat-spinner>
+          </div>
+
+          <div *ngIf="!loadingMessages && messages.length === 0" class="no-messages">
+            <p>No messages yet. Say hello!</p>
+          </div>
+
+          <div *ngIf="!loadingMessages && messages.length > 0" class="messages-list">
+            <div *ngFor="let msg of messages"
+                 class="message-bubble"
+                 [class.own]="isOwnMessage(msg)"
+                 [class.other]="!isOwnMessage(msg)">
+              <span class="message-sender" *ngIf="!isOwnMessage(msg)">{{ msg.senderName }}</span>
+              <p class="message-text">{{ msg.content }}</p>
+              <span class="message-time">{{ msg.createdAt | date:'HH:mm' }}</span>
+            </div>
+            <div #messagesEnd></div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="message-input-area">
+          <mat-form-field appearance="outline" class="message-input">
+            <input matInput
+                   [(ngModel)]="messageText"
+                   (keypress)="onKeyPress($event)"
+                   placeholder="Type a message...">
+          </mat-form-field>
+          <button mat-fab color="primary" (click)="sendMessage()"
+                  [disabled]="!messageText.trim()">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

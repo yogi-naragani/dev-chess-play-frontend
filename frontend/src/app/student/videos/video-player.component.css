@@ -1,0 +1,70 @@
+.video-player-container {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.video-wrapper {
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.video-element {
+  width: 100%;
+  display: block;
+  max-height: 540px;
+}
+
+.video-info-card {
+  margin-bottom: 24px;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.7);
+  margin: 16px 0;
+}
+
+.instructor-info,
+.upload-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.category {
+  margin-left: 8px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.error-container mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #c62828;
+}

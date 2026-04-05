@@ -1,0 +1,42 @@
+<mat-toolbar color="primary" class="navbar">
+  <button mat-icon-button (click)="toggleSidenav.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <a [routerLink]="getDashboardLink()" class="brand">
+    <mat-icon>castle</mat-icon>
+    <span class="brand-text">Chess Academy</span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <!-- Theme Toggle -->
+  <button mat-icon-button (click)="toggleTheme()" [matTooltip]="isDarkMode ? 'Light Mode' : 'Dark Mode'">
+    <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
+  <!-- Notifications -->
+  <button mat-icon-button [matBadge]="'3'" matBadgeColor="warn" matBadgeSize="small">
+    <mat-icon>notifications</mat-icon>
+  </button>
+
+  <!-- User Menu -->
+  <button mat-icon-button [matMenuTriggerFor]="userMenu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <div class="user-info" *ngIf="user">
+      <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+      <small>{{ user.userType | titlecase }}</small>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item [routerLink]="getDashboardLink()">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

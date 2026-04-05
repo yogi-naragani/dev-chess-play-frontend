@@ -1,0 +1,107 @@
+<div class="live-lesson-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && !lesson" class="empty-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>Lesson not found</p>
+    <button mat-raised-button color="primary" routerLink="/instructor/lessons">Back to Lessons</button>
+  </div>
+
+  <div *ngIf="!loading && lesson" class="lesson-layout">
+    <!-- Header -->
+    <div class="lesson-header">
+      <div class="header-left">
+        <button mat-icon-button routerLink="/instructor/lessons">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h2>{{ lesson.title }}</h2>
+        <span class="live-badge" *ngIf="lesson.status === 'in_progress'">LIVE</span>
+      </div>
+      <div class="header-right">
+        <button mat-raised-button color="warn" (click)="endLesson()">
+          <mat-icon>stop</mat-icon> End Lesson
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left: Chess Board -->
+      <div class="board-section">
+        <mat-card>
+          <mat-card-content>
+            <app-chess-board
+              [mode]="'play'"
+              [fen]="currentFen"
+              (moveMade)="onMoveMade($event)">
+            </app-chess-board>
+            <div class="board-controls">
+              <button mat-icon-button matTooltip="Undo" (click)="undoMove()">
+                <mat-icon>undo</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Reset" (click)="resetBoard()">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right: Video + Panels -->
+      <div class="side-section">
+        <!-- Video Area Placeholder -->
+        <mat-card class="video-card">
+          <mat-card-content>
+            <div class="video-placeholder">
+              <mat-icon>videocam</mat-icon>
+              <p>Video Conference</p>
+              <span class="placeholder-hint">Daily.co integration area</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Move History -->
+        <mat-card class="moves-card">
+          <mat-card-header>
+            <mat-card-title>Move History</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="moves.length === 0" class="no-moves">
+              No moves yet
+            </div>
+            <div class="moves-list" *ngIf="moves.length > 0">
+              <div class="move-row" *ngFor="let move of moves">
+                <span class="move-number">{{ move.number }}.</span>
+                <span class="move-white">{{ move.white }}</span>
+                <span class="move-black">{{ move.black || '' }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Student List -->
+        <mat-card class="students-card">
+          <mat-card-header>
+            <mat-card-title>Students ({{ connectedStudents.length }})</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="connectedStudents.length === 0" class="no-students">
+              No students connected
+            </div>
+            <mat-list dense *ngIf="connectedStudents.length > 0">
+              <mat-list-item *ngFor="let student of connectedStudents">
+                <mat-icon matListItemIcon [class.online]="student.online" [class.offline]="!student.online">
+                  circle
+                </mat-icon>
+                <span matListItemTitle>{{ student.name }}</span>
+                <span matListItemLine>{{ student.online ? 'Online' : 'Offline' }}</span>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<div class="puzzle-solver-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading puzzle...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/puzzles">Back to Puzzles</button>
+  </div>
+
+  <div *ngIf="!loading && !error && puzzle">
+    <div class="puzzle-header">
+      <button mat-icon-button routerLink="/student/puzzles">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ puzzle.title }}</h2>
+      <div class="timer">
+        <mat-icon>timer</mat-icon>
+        <span>{{ formatTime(timerSeconds) }}</span>
+      </div>
+    </div>
+
+    <div class="solver-layout">
+      <!-- Board -->
+      <div class="board-section">
+        <mat-card>
+          <mat-card-content>
+            <app-chess-board
+              [fen]="puzzle.fen"
+              [mode]="'play'"
+              [playerColor]="puzzle.playerColor"
+              [disabled]="solved || failed"
+              (moveMade)="onMoveMade($event)">
+            </app-chess-board>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Puzzle Info Panel -->
+      <div class="info-panel">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{ puzzle.playerColor === 'w' ? 'White' : 'Black' }} to move</mat-card-title>
+            <mat-card-subtitle>Rating: {{ puzzle.rating }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="puzzle-desc">{{ puzzle.description }}</p>
+
+            <div class="themes" *ngIf="puzzle.themes?.length">
+              <mat-chip-set>
+                <mat-chip *ngFor="let theme of puzzle.themes">{{ theme }}</mat-chip>
+              </mat-chip-set>
+            </div>
+
+            <!-- Moves made -->
+            <div class="moves-made" *ngIf="playerMoves.length > 0">
+              <h4>Your moves:</h4>
+              <div class="move-list">
+                <span *ngFor="let move of playerMoves; let i = index" class="move-tag">
+                  {{ i + 1 }}. {{ move }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Hint -->
+            <div *ngIf="hintText" class="hint-box">
+              <mat-icon>lightbulb</mat-icon>
+              <span>{{ hintText }}</span>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button mat-button (click)="requestHint()" [disabled]="solved || failed">
+              <mat-icon>lightbulb</mat-icon> Hint
+            </button>
+            <button mat-raised-button color="primary"
+                    (click)="submitSolution()"
+                    [disabled]="playerMoves.length === 0 || solved || submitting">
+              <mat-icon>check</mat-icon> Submit
+            </button>
+            <button mat-button (click)="resetPuzzle()" *ngIf="failed">
+              <mat-icon>refresh</mat-icon> Retry
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <!-- Result Card -->
+        <mat-card *ngIf="result" [class]="solved ? 'result-card success' : 'result-card failure'">
+          <mat-card-content>
+            <div class="result-content">
+              <mat-icon>{{ solved ? 'celebration' : 'sentiment_dissatisfied' }}</mat-icon>
+              <div>
+                <h3>{{ solved ? 'Correct!' : 'Incorrect' }}</h3>
+                <p class="rating-change" [class]="result.ratingChange >= 0 ? 'positive' : 'negative'">
+                  Rating: {{ result.ratingChange >= 0 ? '+' : '' }}{{ result.ratingChange }}
+                </p>
+                <p>New rating: {{ result.newRating }}</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+<div class="computer-game-container">
+  <!-- Setup Screen -->
+  <div *ngIf="!gameStarted" class="setup-screen">
+    <mat-card class="setup-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>computer</mat-icon>
+        <mat-card-title>Play vs Computer</mat-card-title>
+        <mat-card-subtitle>Configure your game</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Difficulty -->
+        <div class="setting-group">
+          <label>Difficulty</label>
+          <mat-button-toggle-group [(ngModel)]="difficulty" class="toggle-group">
+            <mat-button-toggle *ngFor="let d of difficulties" [value]="d">
+              {{ d | titlecase }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <!-- Color -->
+        <div class="setting-group">
+          <label>Play as</label>
+          <mat-button-toggle-group [(ngModel)]="colorChoice" class="toggle-group">
+            <mat-button-toggle value="w">
+              <mat-icon>circle</mat-icon> White
+            </mat-button-toggle>
+            <mat-button-toggle value="b">
+              <mat-icon>circle</mat-icon> Black
+            </mat-button-toggle>
+            <mat-button-toggle value="random">
+              <mat-icon>shuffle</mat-icon> Random
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <div *ngIf="!stockfishReady" class="engine-loading">
+          <mat-spinner diameter="24"></mat-spinner>
+          <span>Loading chess engine...</span>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary"
+                (click)="startGame()"
+                [disabled]="!stockfishReady">
+          <mat-icon>play_arrow</mat-icon> Start Game
+        </button>
+        <button mat-button routerLink="/student/play">Back to Lobby</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Game Screen -->
+  <div *ngIf="gameStarted" class="game-screen">
+    <div class="game-header">
+      <div class="game-info">
+        <span class="difficulty-badge">{{ difficulty | titlecase }}</span>
+        <span class="color-info">Playing as {{ playerColor === 'w' ? 'White' : 'Black' }}</span>
+      </div>
+      <div class="game-actions">
+        <button mat-button (click)="getHint()" [disabled]="gameOver || thinking">
+          <mat-icon>lightbulb</mat-icon> Hint
+        </button>
+        <button mat-raised-button color="primary" (click)="newGame()">
+          <mat-icon>refresh</mat-icon> New Game
+        </button>
+      </div>
+    </div>
+
+    <div class="game-layout">
+      <div class="board-section">
+        <app-chess-board
+          [fen]="currentFen"
+          [mode]="'play'"
+          [playerColor]="playerColor"
+          [flipped]="playerColor === 'b'"
+          [disabled]="thinking || gameOver"
+          (moveMade)="onMoveMade($event)">
+        </app-chess-board>
+
+        <div *ngIf="thinking" class="thinking-indicator">
+          <mat-spinner diameter="20"></mat-spinner>
+          <span>Engine is thinking...</span>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Move History</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="move-history">
+              <div *ngIf="moveHistory.length === 0" class="no-moves">No moves yet</div>
+              <div class="move-pairs">
+                <div *ngFor="let move of moveHistory; let i = index" class="move-entry">
+                  <span *ngIf="i % 2 === 0" class="move-num">{{ (i / 2 | number:'1.0-0') + 1 }}.</span>
+                  <span class="move-san">{{ move }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card *ngIf="gameOver" class="game-over-card">
+          <mat-card-content>
+            <mat-icon>emoji_events</mat-icon>
+            <h3>Game Over</h3>
+            <button mat-raised-button color="primary" (click)="newGame()">
+              <mat-icon>refresh</mat-icon> Play Again
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
