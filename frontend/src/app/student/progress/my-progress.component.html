@@ -119,7 +119,7 @@
         <mat-card-title>Opening Repertoire</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-list *ngIf="progress.openingRepertoire?.length > 0; else noOpenings">
+        <mat-list *ngIf="progress.openingRepertoire && progress.openingRepertoire.length > 0; else noOpenings">
           <mat-list-item *ngFor="let opening of progress.openingRepertoire">
             <div matListItemTitle>{{ opening.name }}</div>
             <div matListItemLine>

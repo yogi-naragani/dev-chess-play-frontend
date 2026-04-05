@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule } from '@angular/material/list';
+import { MatChipsModule } from '@angular/material/chips';
 import { ChessBoardComponent } from '../../shared/chess-board/chess-board.component';
 import { LessonService, Lesson } from '../../services/lesson.service';
 import { SocketService } from '../../services/socket.service';
@@ -20,7 +21,7 @@ import { Subscription } from 'rxjs';
   imports: [
     CommonModule, RouterModule, FormsModule, MatCardModule, MatButtonModule,
     MatIconModule, MatInputModule, MatFormFieldModule,
-    MatProgressSpinnerModule, MatListModule, ChessBoardComponent
+    MatProgressSpinnerModule, MatListModule, MatChipsModule, ChessBoardComponent
   ],
   templateUrl: './student-lesson-view.component.html',
   styleUrl: './student-lesson-view.component.css'

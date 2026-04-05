@@ -94,7 +94,7 @@
               <div *ngIf="moveHistory.length === 0" class="no-moves">No moves yet</div>
               <div class="move-pairs">
                 <div *ngFor="let move of moveHistory; let i = index" class="move-entry">
-                  <span *ngIf="i % 2 === 0" class="move-num">{{ (i / 2 | number:'1.0-0') + 1 }}.</span>
+                  <span *ngIf="i % 2 === 0" class="move-num">{{ (i / 2 + 1) }}.</span>
                   <span class="move-san">{{ move }}</span>
                 </div>
               </div>
