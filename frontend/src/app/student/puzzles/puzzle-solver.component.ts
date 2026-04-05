@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
 import { ChessBoardComponent } from '../../shared/chess-board/chess-board.component';
 import { PuzzleService, Puzzle, PuzzleSolveResult } from '../../services/puzzle.service';
 
@@ -15,7 +16,7 @@ import { PuzzleService, Puzzle, PuzzleSolveResult } from '../../services/puzzle.
   imports: [
     CommonModule, RouterModule, MatCardModule, MatButtonModule,
     MatIconModule, MatProgressSpinnerModule, MatSnackBarModule,
-    ChessBoardComponent
+    MatChipsModule, ChessBoardComponent
   ],
   templateUrl: './puzzle-solver.component.html',
   styleUrl: './puzzle-solver.component.css'

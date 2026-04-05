@@ -48,7 +48,7 @@
       <!-- Standings -->
       <mat-tab label="Standings">
         <div class="tab-content">
-          <table mat-table [dataSource]="tournament.standings" *ngIf="tournament.standings?.length > 0; else noStandings">
+          <table mat-table [dataSource]="tournament.standings" *ngIf="tournament.standings && tournament.standings.length > 0; else noStandings">
             <ng-container matColumnDef="rank">
               <th mat-header-cell *matHeaderCellDef>#</th>
               <td mat-cell *matCellDef="let s">{{ s.rank }}</td>
