@@ -1,0 +1,93 @@
+.homework-detail-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.header-info h2 {
+  margin: 0 0 8px;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.due-date {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.description-card {
+  margin-bottom: 16px;
+}
+
+.description-card p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.content-card {
+  margin-bottom: 16px;
+}
+
+.board-wrapper {
+  max-width: 400px;
+  margin: 16px auto;
+}
+
+.video-link,
+.game-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.video-link a,
+.game-link a {
+  color: #1565c0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.video-link a:hover,
+.game-link a:hover {
+  text-decoration: underline;
+}
+
+.answer-card {
+  margin-top: 24px;
+}
+
+.answer-field {
+  width: 100%;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.error-container mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #c62828;
+}
