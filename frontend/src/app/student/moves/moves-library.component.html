@@ -68,7 +68,7 @@
             <span class="difficulty-badge" [style.background-color]="getDifficultyColor(seq.difficulty)">
               {{ seq.difficulty | titlecase }}
             </span>
-            <span class="move-count">{{ seq.moves?.length || 0 }} moves</span>
+            <span class="move-count">{{ (seq.moves ? seq.moves.length : 0) }} moves</span>
           </div>
         </mat-card-content>
       </mat-card>

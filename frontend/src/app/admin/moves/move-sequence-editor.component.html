@@ -43,7 +43,7 @@
         <mat-card-content>
           <div class="move-list" *ngIf="moves.length > 0">
             <div class="move-pair" *ngFor="let move of moves; let i = index">
-              <span class="move-number" *ngIf="i % 2 === 0">{{ (i / 2 | number:'1.0-0') + 1 }}.</span>
+              <span class="move-number" *ngIf="i % 2 === 0">{{ i / 2 + 1 }}.</span>
               <span class="move-notation">{{ move }}</span>
             </div>
           </div>

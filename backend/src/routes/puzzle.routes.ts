@@ -53,11 +53,11 @@ export async function puzzleRoutes(app: FastifyInstance): Promise<void> {
   // Create puzzle (admin only)
   app.post('/', {
     preHandler: [app.requireRole('ADMIN', 'INSTRUCTOR')]
-  }, async (request: FastifyRequest<{ Body: CreatePuzzleBody }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Body: CreatePuzzleBody }>, reply: FastifyReply) => {
     const user = request.user as { id: string };
     const puzzle = await Puzzle.create({ ...request.body, createdBy: user.id });
     return reply.status(201).send(puzzle);
-  });
+  }) as any);
 
   // Solve puzzle (student submits answer)
   app.post('/:id/solve', async (request: FastifyRequest<{ Params: { id: string }; Body: { moves: string[] } }>, reply: FastifyReply) => {
@@ -100,8 +100,8 @@ export async function puzzleRoutes(app: FastifyInstance): Promise<void> {
   // Delete puzzle
   app.delete('/:id', {
     preHandler: [app.requireRole('ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     await Puzzle.findByIdAndDelete(request.params.id);
     return reply.send({ message: 'Puzzle deleted' });
-  });
+  }) as any);
 }

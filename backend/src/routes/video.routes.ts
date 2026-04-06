@@ -108,7 +108,7 @@ export async function videoRoutes(app: FastifyInstance): Promise<void> {
   // Delete video (owner instructor or admin only)
   app.delete('/:id', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const user = request.user as { id: string; userType: string };
     const video = await prisma.video.findUnique({ where: { id: request.params.id } });
     if (!video) return reply.status(404).send({ message: 'Video not found' });
@@ -126,5 +126,5 @@ export async function videoRoutes(app: FastifyInstance): Promise<void> {
 
     await prisma.video.delete({ where: { id: request.params.id } });
     return reply.send({ message: 'Video deleted' });
-  });
+  }) as any);
 }

@@ -33,13 +33,13 @@ export async function tournamentRoutes(app: FastifyInstance): Promise<void> {
   // Create tournament (admin only)
   app.post('/', {
     preHandler: [app.requireRole('ADMIN')]
-  }, async (request: FastifyRequest<{ Body: CreateTournamentBody }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Body: CreateTournamentBody }>, reply: FastifyReply) => {
     const { name, description, format, timeControl, maxPlayers, startDate } = request.body;
     const tournament = await prisma.tournament.create({
       data: { name, description, format, timeControl, maxPlayers, startDate: new Date(startDate) }
     });
     return reply.status(201).send(tournament);
-  });
+  }) as any);
 
   // Get tournament by ID
   app.get('/:id', async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
@@ -95,30 +95,30 @@ export async function tournamentRoutes(app: FastifyInstance): Promise<void> {
   // Start tournament (admin)
   app.post('/:id/start', {
     preHandler: [app.requireRole('ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const tournament = await prisma.tournament.update({
       where: { id: request.params.id },
       data: { status: 'ACTIVE', currentRound: 1 }
     });
     return reply.send(tournament);
-  });
+  }) as any);
 
   // Update tournament
   app.put('/:id', {
     preHandler: [app.requireRole('ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string }; Body: any }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string }; Body: any }>, reply: FastifyReply) => {
     const tournament = await prisma.tournament.update({
       where: { id: request.params.id },
       data: request.body
     });
     return reply.send(tournament);
-  });
+  }) as any);
 
   // Delete tournament
   app.delete('/:id', {
     preHandler: [app.requireRole('ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     await prisma.tournament.delete({ where: { id: request.params.id } });
     return reply.send({ message: 'Tournament deleted' });
-  });
+  }) as any);
 }

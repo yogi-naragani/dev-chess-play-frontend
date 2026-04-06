@@ -18,7 +18,7 @@
                      [class.selected]="selectedContact?.id === contact.id"
                      class="contact-item">
         <div matListItemIcon class="avatar" [class.online]="contact.status === 'online'">
-          {{ contact.firstName?.charAt(0) || contact.username.charAt(0) | uppercase }}
+          {{ (contact.firstName ? contact.firstName[0] : contact.username[0]) | uppercase }}
         </div>
         <div matListItemTitle>
           {{ contact.firstName }} {{ contact.lastName }}
@@ -45,7 +45,7 @@
     <div *ngIf="selectedContact" class="chat-content">
       <div class="chat-header">
         <div class="avatar" [class.online]="selectedContact.status === 'online'">
-          {{ selectedContact.firstName?.charAt(0) || selectedContact.username.charAt(0) | uppercase }}
+          {{ (selectedContact.firstName ? selectedContact.firstName[0] : selectedContact.username[0]) | uppercase }}
         </div>
         <div>
           <h3>{{ selectedContact.firstName }} {{ selectedContact.lastName }}</h3>

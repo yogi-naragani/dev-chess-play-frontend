@@ -6,7 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { User } from '../../models/user.model';
@@ -16,7 +17,7 @@ import { User } from '../../models/user.model';
   standalone: true,
   imports: [
     CommonModule, RouterModule, MatToolbarModule, MatButtonModule,
-    MatIconModule, MatMenuModule, MatBadgeModule, MatSlideToggleModule
+    MatIconModule, MatMenuModule, MatBadgeModule, MatTooltipModule, MatDividerModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'

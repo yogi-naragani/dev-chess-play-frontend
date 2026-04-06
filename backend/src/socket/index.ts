@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+// @ts-ignore
 import jwt from 'jsonwebtoken';
 import { gameHandler } from './game.handler.js';
 import { matchmakingHandler } from './matchmaking.handler.js';

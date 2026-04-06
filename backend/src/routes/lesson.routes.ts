@@ -45,7 +45,7 @@ export async function lessonRoutes(app: FastifyInstance): Promise<void> {
   // Create lesson (instructor only)
   app.post('/', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Body: CreateLessonBody }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Body: CreateLessonBody }>, reply: FastifyReply) => {
     const user = request.user as { id: string };
     const { title, description, scheduledAt, duration, courseId, studentIds } = request.body;
 
@@ -68,7 +68,7 @@ export async function lessonRoutes(app: FastifyInstance): Promise<void> {
     });
 
     return reply.status(201).send(lesson);
-  });
+  }) as any);
 
   // Get lesson by ID
   app.get('/:id', async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
@@ -88,35 +88,35 @@ export async function lessonRoutes(app: FastifyInstance): Promise<void> {
   // Update lesson
   app.put('/:id', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string }; Body: any }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string }; Body: any }>, reply: FastifyReply) => {
     const lesson = await prisma.lesson.update({
       where: { id: request.params.id },
       data: request.body
     });
     return reply.send(lesson);
-  });
+  }) as any);
 
   // Start live lesson (sets status to LIVE)
   app.post('/:id/start', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const lesson = await prisma.lesson.update({
       where: { id: request.params.id },
       data: { status: 'LIVE' }
     });
     return reply.send(lesson);
-  });
+  }) as any);
 
   // End lesson
   app.post('/:id/end', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const lesson = await prisma.lesson.update({
       where: { id: request.params.id },
       data: { status: 'COMPLETED' }
     });
     return reply.send(lesson);
-  });
+  }) as any);
 
   // Mark student attendance
   app.post('/:id/attend', async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
@@ -131,8 +131,8 @@ export async function lessonRoutes(app: FastifyInstance): Promise<void> {
   // Delete lesson
   app.delete('/:id', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     await prisma.lesson.delete({ where: { id: request.params.id } });
     return reply.send({ message: 'Lesson deleted' });
-  });
+  }) as any);
 }

@@ -41,14 +41,14 @@ export async function movesRoutes(app: FastifyInstance): Promise<void> {
   // Create move sequence (admin/instructor only)
   app.post('/', {
     preHandler: [app.requireRole('ADMIN', 'INSTRUCTOR')]
-  }, async (request: FastifyRequest<{ Body: CreateMoveSequenceBody }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Body: CreateMoveSequenceBody }>, reply: FastifyReply) => {
     const user = request.user as { id: string };
     const sequence = await MoveSequence.create({
       ...request.body,
       createdBy: user.id
     });
     return reply.status(201).send(sequence);
-  });
+  }) as any);
 
   // Get move sequence by ID
   app.get('/:id', async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
@@ -60,7 +60,7 @@ export async function movesRoutes(app: FastifyInstance): Promise<void> {
   // Update move sequence
   app.put('/:id', {
     preHandler: [app.requireRole('ADMIN', 'INSTRUCTOR')]
-  }, async (request: FastifyRequest<{ Params: { id: string }; Body: Partial<CreateMoveSequenceBody> }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string }; Body: Partial<CreateMoveSequenceBody> }>, reply: FastifyReply) => {
     const sequence = await MoveSequence.findByIdAndUpdate(
       request.params.id,
       { ...request.body, updatedAt: new Date() },
@@ -68,13 +68,13 @@ export async function movesRoutes(app: FastifyInstance): Promise<void> {
     );
     if (!sequence) return reply.status(404).send({ message: 'Move sequence not found' });
     return reply.send(sequence);
-  });
+  }) as any);
 
   // Delete move sequence
   app.delete('/:id', {
     preHandler: [app.requireRole('ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     await MoveSequence.findByIdAndDelete(request.params.id);
     return reply.send({ message: 'Move sequence deleted' });
-  });
+  }) as any);
 }

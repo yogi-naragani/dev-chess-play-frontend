@@ -48,7 +48,7 @@ export async function analyticsRoutes(app: FastifyInstance): Promise<void> {
       totalPuzzles,
       totalMoveSequences,
       activeStudents,
-      usersByType: Object.fromEntries(usersByType.map(u => [u.userType, u._count])),
+      usersByType: Object.fromEntries(usersByType.map((u: any) => [u.userType, u._count])),
       recentGames
     });
   });

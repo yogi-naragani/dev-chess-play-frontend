@@ -42,7 +42,7 @@ export async function homeworkRoutes(app: FastifyInstance): Promise<void> {
   // Create assignment (instructor/admin)
   app.post('/', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Body: CreateAssignmentBody }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Body: CreateAssignmentBody }>, reply: FastifyReply) => {
     const user = request.user as { id: string };
     const { title, description, type, data, dueDate } = request.body;
 
@@ -58,7 +58,7 @@ export async function homeworkRoutes(app: FastifyInstance): Promise<void> {
     });
 
     return reply.status(201).send(assignment);
-  });
+  }) as any);
 
   // Get assignment by ID
   app.get('/:id', async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
@@ -79,7 +79,7 @@ export async function homeworkRoutes(app: FastifyInstance): Promise<void> {
   // Submit homework (student)
   app.post('/:id/submit', {
     preHandler: [app.requireRole('STUDENT')]
-  }, async (request: FastifyRequest<{ Params: { id: string }; Body: { answer: any } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string }; Body: { answer: any } }>, reply: FastifyReply) => {
     const user = request.user as { id: string };
     const { answer } = request.body;
 
@@ -90,12 +90,12 @@ export async function homeworkRoutes(app: FastifyInstance): Promise<void> {
     });
 
     return reply.send(submission);
-  });
+  }) as any);
 
   // Grade submission (instructor)
   app.post('/:id/grade/:submissionId', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string; submissionId: string }; Body: { grade: number; feedback?: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string; submissionId: string }; Body: { grade: number; feedback?: string } }>, reply: FastifyReply) => {
     const { grade, feedback } = request.body;
 
     const submission = await prisma.submission.update({
@@ -104,13 +104,13 @@ export async function homeworkRoutes(app: FastifyInstance): Promise<void> {
     });
 
     return reply.send(submission);
-  });
+  }) as any);
 
   // Delete assignment
   app.delete('/:id', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, (async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     await prisma.assignment.delete({ where: { id: request.params.id } });
     return reply.send({ message: 'Assignment deleted' });
-  });
+  }) as any);
 }

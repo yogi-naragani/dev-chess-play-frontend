@@ -24,7 +24,7 @@ export async function instructorRoutes(app: FastifyInstance): Promise<void> {
       }
     });
 
-    return reply.send(assignments.map(a => a.student));
+    return reply.send(assignments.map((a: any) => a.student));
   });
 
   // Get specific student's progress
