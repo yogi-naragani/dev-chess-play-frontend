@@ -1,0 +1,82 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">Chess Academy Overview</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Stat Cards -->
+    <div class="stat-cards">
+      <mat-card *ngFor="let card of statCards" class="stat-card">
+        <div class="stat-icon" [style.background-color]="card.color">
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ card.value }}</span>
+          <span class="stat-title">{{ card.title }}</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <div class="dashboard-content">
+      <!-- Recent Activity -->
+      <mat-card class="activity-card">
+        <mat-card-header>
+          <mat-card-title>Recent Activity</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list *ngIf="stats.recentActivity.length > 0">
+            <mat-list-item *ngFor="let activity of stats.recentActivity">
+              <mat-icon matListItemIcon>{{ getActivityIcon(activity.type) }}</mat-icon>
+              <span matListItemTitle>{{ activity.description }}</span>
+              <span matListItemLine>{{ activity.timestamp | date:'short' }}</span>
+            </mat-list-item>
+          </mat-list>
+          <div *ngIf="stats.recentActivity.length === 0" class="empty-state">
+            <mat-icon>info</mat-icon>
+            <p>No recent activity</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Quick Actions -->
+      <mat-card class="actions-card">
+        <mat-card-header>
+          <mat-card-title>Quick Actions</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="quick-actions">
+            <button mat-raised-button color="primary" (click)="navigateTo('/admin/instructors/new')">
+              <mat-icon>person_add</mat-icon>
+              Add Instructor
+            </button>
+            <button mat-raised-button color="primary" (click)="navigateTo('/admin/students/new')">
+              <mat-icon>school</mat-icon>
+              Add Student
+            </button>
+            <button mat-raised-button color="accent" (click)="navigateTo('/admin/courses/new')">
+              <mat-icon>library_books</mat-icon>
+              Create Course
+            </button>
+            <button mat-raised-button color="accent" (click)="navigateTo('/admin/tournaments/new')">
+              <mat-icon>emoji_events</mat-icon>
+              Create Tournament
+            </button>
+            <button mat-raised-button (click)="navigateTo('/admin/puzzles/new')">
+              <mat-icon>extension</mat-icon>
+              Add Puzzle
+            </button>
+            <button mat-raised-button (click)="navigateTo('/admin/analytics')">
+              <mat-icon>analytics</mat-icon>
+              View Analytics
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

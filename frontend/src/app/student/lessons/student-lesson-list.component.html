@@ -1,0 +1,71 @@
+<div class="lesson-list-container">
+  <div class="page-header">
+    <h1>My Lessons</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading lessons...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadLessons()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="lessons.length === 0" class="empty-state">
+      <mat-icon>school</mat-icon>
+      <h3>No Lessons Found</h3>
+      <p>You are not enrolled in any lessons yet.</p>
+    </div>
+
+    <table mat-table [dataSource]="lessons" *ngIf="lessons.length > 0" class="lessons-table">
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Title</th>
+        <td mat-cell *matCellDef="let lesson">{{ lesson.title }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="instructor">
+        <th mat-header-cell *matHeaderCellDef>Instructor</th>
+        <td mat-cell *matCellDef="let lesson">{{ lesson.instructorId }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date & Time</th>
+        <td mat-cell *matCellDef="let lesson">
+          {{ lesson.date | date:'mediumDate' }} at {{ lesson.time }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let lesson">
+          <mat-chip [color]="getStatusColor(lesson.status)">
+            {{ lesson.status | titlecase }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let lesson">
+          <button mat-raised-button color="accent"
+                  *ngIf="isLive(lesson)"
+                  [routerLink]="['/student/lessons', lesson.id]">
+            <mat-icon>videocam</mat-icon> Join
+          </button>
+          <button mat-button
+                  *ngIf="!isLive(lesson)"
+                  [routerLink]="['/student/lessons', lesson.id]">
+            View
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

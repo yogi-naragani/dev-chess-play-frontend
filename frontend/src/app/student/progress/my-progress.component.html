@@ -1,0 +1,139 @@
+<div class="progress-container">
+  <div class="page-header">
+    <h1>My Progress</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading progress...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadProgress()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error && progress" class="progress-grid">
+    <!-- Rating Card -->
+    <mat-card class="rating-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>trending_up</mat-icon>
+        <mat-card-title>Game Rating</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="big-rating">{{ progress.currentRating }}</div>
+        <div class="chart-placeholder">
+          <mat-icon>show_chart</mat-icon>
+          <p>Rating history chart</p>
+          <div class="mini-chart">
+            <div *ngFor="let point of progress.ratingHistory?.slice(-10); let i = index"
+                 class="chart-bar"
+                 [style.height.px]="(point.rating - 800) / 10">
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Game Stats -->
+    <mat-card class="stats-card wins-card">
+      <mat-card-content>
+        <mat-icon>emoji_events</mat-icon>
+        <div class="stat-value">{{ progress.wins }}</div>
+        <div class="stat-label">Wins</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stats-card losses-card">
+      <mat-card-content>
+        <mat-icon>close</mat-icon>
+        <div class="stat-value">{{ progress.losses }}</div>
+        <div class="stat-label">Losses</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stats-card draws-card">
+      <mat-card-content>
+        <mat-icon>handshake</mat-icon>
+        <div class="stat-value">{{ progress.draws }}</div>
+        <div class="stat-label">Draws</div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Win Rate -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Win Rate</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="win-rate-display">
+          <div class="win-rate-value">{{ winRate }}%</div>
+          <mat-progress-bar mode="determinate" [value]="winRate"></mat-progress-bar>
+          <p class="games-played">{{ totalGames }} games played</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Lesson Attendance -->
+    <mat-card>
+      <mat-card-content class="stat-single">
+        <mat-icon>school</mat-icon>
+        <div>
+          <div class="stat-value">{{ progress.lessonsAttended }}</div>
+          <div class="stat-label">Lessons Attended</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Puzzle Rating -->
+    <mat-card>
+      <mat-card-content class="stat-single">
+        <mat-icon>extension</mat-icon>
+        <div>
+          <div class="stat-value">{{ progress.puzzleRating }}</div>
+          <div class="stat-label">Puzzle Rating</div>
+          <div class="stat-sub">{{ progress.puzzlesSolved }} puzzles solved</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Accuracy -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Accuracy</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="accuracy-display">
+          <div class="accuracy-value">{{ progress.accuracy }}%</div>
+          <mat-progress-bar mode="determinate" [value]="progress.accuracy" color="accent"></mat-progress-bar>
+          <p class="accuracy-hint">Average move accuracy in recent games</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Opening Repertoire -->
+    <mat-card class="repertoire-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>menu_book</mat-icon>
+        <mat-card-title>Opening Repertoire</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="progress.openingRepertoire && progress.openingRepertoire.length > 0; else noOpenings">
+          <mat-list-item *ngFor="let opening of progress.openingRepertoire">
+            <div matListItemTitle>{{ opening.name }}</div>
+            <div matListItemLine>
+              {{ opening.games }} games | {{ opening.winRate }}% win rate
+            </div>
+            <mat-progress-bar matListItemMeta mode="determinate" [value]="opening.winRate"
+                              [color]="opening.winRate >= 50 ? 'primary' : 'warn'">
+            </mat-progress-bar>
+          </mat-list-item>
+        </mat-list>
+        <ng-template #noOpenings>
+          <p class="empty-text">No opening data available yet. Play more games!</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

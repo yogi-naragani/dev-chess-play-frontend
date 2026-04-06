@@ -1,0 +1,22 @@
+<div class="board-wrapper">
+  <div class="chess-board">
+    <ng-container *ngFor="let row of squares; let rowIdx = index">
+      <div *ngFor="let square of row; let colIdx = index"
+           class="chess-square"
+           [class.light]="square.isLight"
+           [class.dark]="!square.isLight"
+           [class.selected]="square.isSelected"
+           [class.highlighted]="square.isHighlighted"
+           [class.move-hint]="square.isMoveHint && !square.piece"
+           [class.capture-hint]="square.isMoveHint && square.piece"
+           (click)="onSquareClick(rowIdx, colIdx)">
+        <span class="piece" *ngIf="square.piece">{{ square.piece }}</span>
+        <span class="hint-dot" *ngIf="square.isMoveHint && !square.piece"></span>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="board-status" *ngIf="gameStatus">
+    {{ gameStatus }}
+  </div>
+</div>

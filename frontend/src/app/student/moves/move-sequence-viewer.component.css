@@ -1,0 +1,126 @@
+.viewer-container {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.nav-bar h2 {
+  margin: 0;
+}
+
+.nav-bar .subtitle {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 14px;
+}
+
+.viewer-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px !important;
+}
+
+.move-counter {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  min-width: 60px;
+  text-align: center;
+}
+
+.move-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.move-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.move-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.move-item.active {
+  background: #e3f2fd;
+  font-weight: 600;
+}
+
+.move-number {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 13px;
+  min-width: 30px;
+}
+
+.move-san {
+  font-family: monospace;
+  font-size: 15px;
+}
+
+.move-annotation {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+  margin-left: auto;
+}
+
+.no-moves {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.38);
+  padding: 24px;
+}
+
+.desc-card {
+  margin-top: 16px;
+}
+
+.desc-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.error-container mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #c62828;
+}
+
+@media (max-width: 768px) {
+  .viewer-layout {
+    grid-template-columns: 1fr;
+  }
+}

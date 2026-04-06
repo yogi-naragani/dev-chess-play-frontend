@@ -1,0 +1,63 @@
+.lobby-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header h1 {
+  margin: 0 0 24px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.lobby-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.action-card {
+  border-top: 4px solid;
+}
+
+.computer-card {
+  border-color: #1565c0;
+}
+
+.queue-card {
+  border-color: #ff6f00;
+}
+
+.tc-select {
+  width: 100%;
+}
+
+.online-card .mat-mdc-list-item {
+  margin-bottom: 4px;
+}
+
+.online-dot {
+  color: #4caf50 !important;
+  font-size: 12px !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.ingame-dot {
+  color: #ff9800 !important;
+  font-size: 12px !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.inline-loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.empty-state {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.38);
+  padding: 24px;
+}

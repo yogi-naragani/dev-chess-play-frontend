@@ -1,0 +1,91 @@
+<div class="viewer-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading sequence...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/moves">Back to Library</button>
+  </div>
+
+  <div *ngIf="!loading && !error && sequence">
+    <div class="nav-bar">
+      <button mat-icon-button routerLink="/student/moves">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2>{{ sequence.title }}</h2>
+        <p class="subtitle">{{ sequence.opening }}</p>
+      </div>
+    </div>
+
+    <div class="viewer-layout">
+      <!-- Board -->
+      <div class="board-section">
+        <mat-card>
+          <mat-card-content>
+            <app-chess-board
+              [fen]="currentFen"
+              [mode]="'view-only'"
+              [disabled]="true">
+            </app-chess-board>
+          </mat-card-content>
+          <mat-card-actions class="nav-controls">
+            <button mat-icon-button (click)="goToStart()" [disabled]="!canGoBack">
+              <mat-icon>skip_previous</mat-icon>
+            </button>
+            <button mat-icon-button (click)="goBack()" [disabled]="!canGoBack">
+              <mat-icon>navigate_before</mat-icon>
+            </button>
+            <span class="move-counter">
+              {{ currentMoveIndex + 1 }} / {{ sequence.moves.length }}
+            </span>
+            <button mat-icon-button (click)="goForward()" [disabled]="!canGoForward">
+              <mat-icon>navigate_next</mat-icon>
+            </button>
+            <button mat-icon-button (click)="goToEnd()" [disabled]="!canGoForward">
+              <mat-icon>skip_next</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Move List -->
+      <div class="moves-panel">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Moves</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="move-list">
+              <div *ngFor="let move of sequence.moves; let i = index"
+                   class="move-item"
+                   [class.active]="i === currentMoveIndex"
+                   (click)="goToMove(i)">
+                <span class="move-number">{{ i + 1 }}.</span>
+                <span class="move-san">{{ move.san }}</span>
+                <span class="move-annotation" *ngIf="move.annotation">{{ move.annotation }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="sequence.moves.length === 0" class="no-moves">
+              <p>No moves in this sequence.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Description -->
+        <mat-card *ngIf="sequence.description" class="desc-card">
+          <mat-card-header>
+            <mat-card-title>Description</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ sequence.description }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

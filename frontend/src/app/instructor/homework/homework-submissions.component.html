@@ -1,0 +1,82 @@
+<div class="submissions-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/instructor/homework">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1>Submissions</h1>
+      <p class="subtitle" *ngIf="homework">{{ homework.title }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && submissions.length === 0" class="empty-state">
+    <mat-icon>inbox</mat-icon>
+    <p>No submissions yet</p>
+  </div>
+
+  <div *ngIf="!loading && submissions.length > 0" class="submissions-list">
+    <mat-card *ngFor="let sub of submissions" class="submission-card">
+      <mat-card-content>
+        <div class="submission-header">
+          <div class="student-info">
+            <mat-icon>person</mat-icon>
+            <div>
+              <span class="student-name">{{ sub.studentName }}</span>
+              <span class="submitted-at">Submitted {{ sub.submittedAt | date:'MMM d, y HH:mm' }}</span>
+            </div>
+          </div>
+          <div class="grade-badge" *ngIf="sub.grade !== undefined && sub.grade !== null">
+            <span>{{ sub.grade }}/100</span>
+          </div>
+          <span class="ungraded-badge" *ngIf="sub.grade === undefined || sub.grade === null">Ungraded</span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="answer-section">
+          <h4>Answer</h4>
+          <pre class="answer-content">{{ formatAnswer(sub.answer) }}</pre>
+        </div>
+
+        <!-- Existing feedback -->
+        <div *ngIf="sub.feedback && gradingSubmissionId !== sub.id" class="feedback-section">
+          <h4>Feedback</h4>
+          <p>{{ sub.feedback }}</p>
+        </div>
+
+        <!-- Grading form -->
+        <div *ngIf="gradingSubmissionId === sub.id" class="grading-form">
+          <mat-divider></mat-divider>
+          <h4>Grade this submission</h4>
+          <div class="grading-row">
+            <mat-form-field appearance="outline" class="grade-field">
+              <mat-label>Grade (0-100)</mat-label>
+              <input matInput type="number" [(ngModel)]="gradeValue" min="0" max="100">
+            </mat-form-field>
+          </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Feedback</mat-label>
+            <textarea matInput [(ngModel)]="feedbackValue" rows="3" placeholder="Provide feedback to the student..."></textarea>
+          </mat-form-field>
+          <div class="grading-actions">
+            <button mat-button (click)="cancelGrading()">Cancel</button>
+            <button mat-raised-button color="primary" (click)="submitGrade(sub)"
+                    [disabled]="gradeValue === null">
+              Submit Grade
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions *ngIf="gradingSubmissionId !== sub.id">
+        <button mat-button color="primary" (click)="startGrading(sub)">
+          <mat-icon>grading</mat-icon>
+          {{ sub.grade !== undefined && sub.grade !== null ? 'Re-grade' : 'Grade' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,106 @@
+<div class="puzzle-dashboard-container">
+  <div class="page-header">
+    <h1>Puzzle Hub</h1>
+    <div class="puzzle-rating-display">
+      <mat-icon>extension</mat-icon>
+      <span class="rating-value">{{ puzzleRating }}</span>
+      <span class="rating-label">Puzzle Rating</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading puzzles...</p>
+  </div>
+
+  <div *ngIf="!loading" class="puzzle-grid">
+    <!-- Daily Puzzle -->
+    <mat-card class="daily-puzzle-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>today</mat-icon>
+        <mat-card-title>Daily Puzzle</mat-card-title>
+        <mat-card-subtitle *ngIf="dailyPuzzle">
+          <mat-chip *ngIf="dailyPuzzle.completed" class="solved-chip">Solved</mat-chip>
+          <mat-chip *ngIf="!dailyPuzzle.completed" class="unsolved-chip">Not solved</mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="dailyPuzzle; else noDailyPuzzle">
+          <app-chess-board
+            [fen]="dailyPuzzle.puzzle.fen"
+            [mode]="'view-only'"
+            [disabled]="true">
+          </app-chess-board>
+          <p class="puzzle-info">Rating: {{ dailyPuzzle.puzzle.rating }} | {{ dailyPuzzle.puzzle.category }}</p>
+        </div>
+        <ng-template #noDailyPuzzle>
+          <div class="empty-state-inline">
+            <mat-icon>extension</mat-icon>
+            <p>No daily puzzle available</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary"
+                *ngIf="dailyPuzzle && !dailyPuzzle.completed"
+                [routerLink]="['/student/puzzles', dailyPuzzle.puzzle.id]">
+          <mat-icon>play_arrow</mat-icon> Solve Now
+        </button>
+        <button mat-button color="primary"
+                *ngIf="dailyPuzzle?.completed"
+                [routerLink]="['/student/puzzles', dailyPuzzle!.puzzle.id]">
+          View Solution
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Categories -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>category</mat-icon>
+        <mat-card-title>Browse by Category</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="categories.length > 0; else noCategories" class="category-list">
+          <mat-chip-set>
+            <mat-chip *ngFor="let cat of categories"
+                      [routerLink]="['/student/puzzles']"
+                      [queryParams]="{ category: cat }">
+              {{ cat }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <ng-template #noCategories>
+          <p class="empty-state-inline-text">No categories available.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Recent Attempts -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>history</mat-icon>
+        <mat-card-title>Recent Attempts</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="recentAttempts.length > 0; else noAttempts">
+          <mat-list-item *ngFor="let attempt of recentAttempts">
+            <mat-icon matListItemIcon [class]="attempt.solved ? 'solved-icon' : 'failed-icon'">
+              {{ attempt.solved ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+            <div matListItemTitle>{{ attempt.puzzleTitle }}</div>
+            <div matListItemLine>
+              {{ attempt.attemptedAt | date:'short' }}
+              <span [class]="attempt.ratingChange >= 0 ? 'positive' : 'negative'">
+                {{ attempt.ratingChange >= 0 ? '+' : '' }}{{ attempt.ratingChange }}
+              </span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+        <ng-template #noAttempts>
+          <p class="empty-state-inline-text">No puzzle attempts yet. Start solving!</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

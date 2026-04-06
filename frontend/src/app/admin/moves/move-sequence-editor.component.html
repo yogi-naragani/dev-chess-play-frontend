@@ -1,0 +1,120 @@
+<div class="move-editor">
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Edit Move Sequence' : 'Create Move Sequence' }}</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="editor-layout">
+    <!-- Left: Chess Board + Move List -->
+    <div class="board-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Board Editor</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="board-wrapper">
+            <app-chess-board
+              [mode]="'editor'"
+              [fen]="currentFen"
+              (moveMade)="onMoveMade($event)">
+            </app-chess-board>
+          </div>
+          <div class="board-actions">
+            <button mat-button (click)="removeLastMove()" [disabled]="moves.length === 0">
+              <mat-icon>undo</mat-icon>
+              Undo
+            </button>
+            <button mat-button color="warn" (click)="clearMoves()" [disabled]="moves.length === 0">
+              <mat-icon>clear_all</mat-icon>
+              Clear
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Move List Sidebar -->
+      <mat-card class="move-list-card">
+        <mat-card-header>
+          <mat-card-title>Moves ({{ moves.length }})</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="move-list" *ngIf="moves.length > 0">
+            <div class="move-pair" *ngFor="let move of moves; let i = index">
+              <span class="move-number" *ngIf="i % 2 === 0">{{ i / 2 + 1 }}.</span>
+              <span class="move-notation">{{ move }}</span>
+            </div>
+          </div>
+          <div *ngIf="moves.length === 0" class="empty-moves">
+            <p>Make moves on the board to build the sequence</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right: Form Fields -->
+    <div class="form-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Sequence Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Title</mat-label>
+              <input matInput formControlName="title" placeholder="e.g. Sicilian Defense: Najdorf Variation">
+              <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('category')?.hasError('required')">Category is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Opening Name</mat-label>
+              <input matInput formControlName="openingName" placeholder="e.g. Sicilian Defense">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Difficulty</mat-label>
+              <mat-select formControlName="difficulty">
+                <mat-option *ngFor="let diff of difficulties" [value]="diff">{{ diff }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('difficulty')?.hasError('required')">Difficulty is required</mat-error>
+            </mat-form-field>
+
+            <!-- Tags -->
+            <div class="tags-section">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Add Tag</mat-label>
+                <input matInput [(ngModel)]="tagInput" [ngModelOptions]="{standalone: true}"
+                       (keyup.enter)="addTag()" placeholder="Press Enter to add">
+                <mat-icon matSuffix (click)="addTag()" style="cursor: pointer;">add</mat-icon>
+              </mat-form-field>
+              <mat-chip-set class="tag-chips">
+                <mat-chip *ngFor="let tag of tags" (removed)="removeTag(tag)" highlighted>
+                  {{ tag }}
+                  <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+
+            <div class="form-actions">
+              <button mat-button type="button" (click)="cancel()">Cancel</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving">
+                <mat-spinner *ngIf="saving" diameter="20" class="button-spinner"></mat-spinner>
+                {{ isEditMode ? 'Update' : 'Save' }} Sequence
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

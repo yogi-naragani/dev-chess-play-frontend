@@ -1,0 +1,57 @@
+<div class="course-list">
+  <div class="page-header">
+    <h1>Courses</h1>
+    <button mat-raised-button color="primary" (click)="addCourse()">
+      <mat-icon>add</mat-icon>
+      Add Course
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <div *ngIf="courses.length === 0" class="empty-state">
+      <mat-icon>library_books</mat-icon>
+      <p>No courses found</p>
+      <button mat-raised-button color="primary" (click)="addCourse()">Create First Course</button>
+    </div>
+
+    <div class="courses-grid">
+      <mat-card *ngFor="let course of courses" class="course-card">
+        <mat-card-header>
+          <mat-card-title>{{ course.name }}</mat-card-title>
+          <mat-card-subtitle>
+            <span class="level-badge" [style.background-color]="getLevelColor(course.level)">
+              {{ course.level }}
+            </span>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="course-description">{{ course.description || 'No description available' }}</p>
+          <div class="course-meta">
+            <span class="meta-item">
+              <mat-icon>class</mat-icon>
+              {{ course.lessonCount }} lessons
+            </span>
+            <span class="meta-item">
+              <mat-icon>calendar_today</mat-icon>
+              {{ course.createdAt | date:'mediumDate' }}
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary" (click)="editCourse(course)">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          <button mat-button color="warn" (click)="deleteCourse(course)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

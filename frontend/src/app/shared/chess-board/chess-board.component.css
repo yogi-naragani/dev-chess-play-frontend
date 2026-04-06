@@ -1,0 +1,63 @@
+.board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1;
+}
+
+.chess-square {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: background-color 0.1s;
+}
+
+.chess-square.light { background-color: var(--board-light); }
+.chess-square.dark { background-color: var(--board-dark); }
+.chess-square.selected { background-color: rgba(255, 255, 0, 0.5) !important; }
+.chess-square.highlighted { background-color: rgba(255, 255, 0, 0.3) !important; }
+
+.chess-square.capture-hint {
+  background: radial-gradient(transparent 0%, transparent 60%, rgba(0, 0, 0, 0.15) 60%) !important;
+}
+
+.piece {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hint-dot {
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.chess-square:hover {
+  filter: brightness(0.92);
+}
+
+.board-status {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--bg-card);
+}

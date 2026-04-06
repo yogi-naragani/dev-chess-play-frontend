@@ -1,0 +1,19 @@
+<!-- Layout with navbar + sidenav for authenticated pages -->
+<ng-container *ngIf="showLayout; else noLayout">
+  <app-navbar (toggleSidenav)="toggleSidenav()"></app-navbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #sidenav mode="side" opened class="sidenav">
+      <app-sidebar></app-sidebar>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-content">
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-container>
+
+<!-- No layout for login page -->
+<ng-template #noLayout>
+  <router-outlet />
+</ng-template>

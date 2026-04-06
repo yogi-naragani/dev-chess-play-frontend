@@ -1,0 +1,84 @@
+<div class="homework-list-container">
+  <div class="page-header">
+    <h1>My Homework</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading assignments...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadAssignments()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="assignments.length === 0" class="empty-state">
+      <mat-icon>assignment_turned_in</mat-icon>
+      <h3>No Homework</h3>
+      <p>You have no assignments. Enjoy your free time!</p>
+    </div>
+
+    <!-- Pending -->
+    <div *ngIf="pendingAssignments.length > 0">
+      <h2 class="section-title">
+        <mat-icon>pending_actions</mat-icon>
+        Pending ({{ pendingAssignments.length }})
+      </h2>
+      <div class="assignment-list">
+        <mat-card *ngFor="let hw of pendingAssignments" class="assignment-card"
+                  [routerLink]="['/student/homework', hw.id]">
+          <mat-card-content>
+            <div class="assignment-row">
+              <mat-icon class="type-icon" [class]="'type-' + hw.type">{{ getTypeIcon(hw.type) }}</mat-icon>
+              <div class="assignment-info">
+                <h3>{{ hw.title }}</h3>
+                <p>{{ hw.description }}</p>
+                <div class="meta">
+                  <mat-chip class="type-chip">{{ hw.type | titlecase }}</mat-chip>
+                  <span class="due-date" [class.overdue]="isOverdue(hw.dueDate)">
+                    Due: {{ hw.dueDate | date:'mediumDate' }}
+                  </span>
+                </div>
+              </div>
+              <button mat-raised-button color="primary">
+                <mat-icon>send</mat-icon> Submit
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <mat-divider *ngIf="pendingAssignments.length > 0 && completedAssignments.length > 0"
+                 class="section-divider"></mat-divider>
+
+    <!-- Completed -->
+    <div *ngIf="completedAssignments.length > 0">
+      <h2 class="section-title">
+        <mat-icon>check_circle</mat-icon>
+        Past Assignments ({{ completedAssignments.length }})
+      </h2>
+      <div class="assignment-list">
+        <mat-card *ngFor="let hw of completedAssignments" class="assignment-card completed"
+                  [routerLink]="['/student/homework', hw.id]">
+          <mat-card-content>
+            <div class="assignment-row">
+              <mat-icon class="type-icon">{{ getTypeIcon(hw.type) }}</mat-icon>
+              <div class="assignment-info">
+                <h3>{{ hw.title }}</h3>
+                <div class="meta">
+                  <mat-chip>{{ hw.type | titlecase }}</mat-chip>
+                  <span class="due-date">Due: {{ hw.dueDate | date:'mediumDate' }}</span>
+                </div>
+              </div>
+              <button mat-button>View</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="homework-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading assignment...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/homework">Back</button>
+  </div>
+
+  <div *ngIf="!loading && !error && homework">
+    <div class="header">
+      <button mat-icon-button routerLink="/student/homework">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h2>{{ homework.title }}</h2>
+        <div class="header-meta">
+          <mat-chip>{{ getTypeLabel(homework.type) }}</mat-chip>
+          <span class="due-date">Due: {{ homework.dueDate | date:'mediumDate' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <mat-card class="description-card">
+      <mat-card-header>
+        <mat-card-title>Instructions</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ homework.description }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Type-specific content -->
+    <mat-card class="content-card" *ngIf="homework.type === 'solve_position' && homework.data?.fen">
+      <mat-card-header>
+        <mat-card-title>Position to Solve</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="board-wrapper">
+          <app-chess-board
+            [fen]="homework.data.fen!"
+            [mode]="'play'"
+            [disabled]="false">
+          </app-chess-board>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="content-card" *ngIf="homework.type === 'watch_video' && homework.data?.videoId">
+      <mat-card-header>
+        <mat-card-title>Video to Watch</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="video-link">
+          <mat-icon>play_circle</mat-icon>
+          <a [routerLink]="['/student/videos', homework.data.videoId]">Watch Video</a>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="content-card" *ngIf="homework.type === 'review_game' && homework.data?.gameId">
+      <mat-card-header>
+        <mat-card-title>Game to Review</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="game-link">
+          <mat-icon>sports_esports</mat-icon>
+          <a [routerLink]="['/student/play/game', homework.data.gameId]">Review Game</a>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Answer Input -->
+    <mat-card class="answer-card">
+      <mat-card-header>
+        <mat-card-title>Your Answer</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="answer-field">
+          <mat-label>Enter your answer or notes</mat-label>
+          <textarea matInput [(ngModel)]="answer" rows="4"
+                    placeholder="Type your answer here..."></textarea>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary"
+                (click)="submitAnswer()"
+                [disabled]="!answer.trim() || submitting">
+          <mat-icon>send</mat-icon>
+          {{ submitting ? 'Submitting...' : 'Submit Answer' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

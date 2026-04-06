@@ -1,0 +1,66 @@
+<div class="tournament-list-container">
+  <div class="page-header">
+    <h1>Tournaments</h1>
+  </div>
+
+  <!-- Status Filter -->
+  <div class="filter-section">
+    <mat-chip-set>
+      <mat-chip [highlighted]="selectedStatus === 'upcoming'" (click)="filterByStatus('upcoming')">Upcoming</mat-chip>
+      <mat-chip [highlighted]="selectedStatus === 'active'" (click)="filterByStatus('active')">Active</mat-chip>
+      <mat-chip [highlighted]="selectedStatus === 'completed'" (click)="filterByStatus('completed')">Completed</mat-chip>
+    </mat-chip-set>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading tournaments...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadTournaments()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="tournaments.length === 0" class="empty-state">
+      <mat-icon>emoji_events</mat-icon>
+      <h3>No Tournaments Found</h3>
+      <p>Check back later for upcoming tournaments.</p>
+    </div>
+
+    <div class="tournament-grid">
+      <mat-card *ngFor="let t of tournaments" class="tournament-card"
+                [routerLink]="['/student/tournaments', t.id]">
+        <div class="status-indicator" [style.background-color]="getStatusColor(t.status)"></div>
+        <mat-card-header>
+          <mat-icon mat-card-avatar>{{ getFormatIcon(t.format) }}</mat-icon>
+          <mat-card-title>{{ t.name }}</mat-card-title>
+          <mat-card-subtitle>{{ t.format | titlecase }} | {{ t.timeControl }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="description">{{ t.description }}</p>
+          <div class="tournament-meta">
+            <div class="meta-item">
+              <mat-icon>people</mat-icon>
+              <span>{{ t.currentPlayers }}/{{ t.maxPlayers }} players</span>
+            </div>
+            <div class="meta-item">
+              <mat-icon>event</mat-icon>
+              <span>{{ t.startDate | date:'mediumDate' }}</span>
+            </div>
+            <mat-chip [style.background-color]="getStatusColor(t.status)" class="status-chip">
+              {{ t.status | titlecase }}
+            </mat-chip>
+          </div>
+        </mat-card-content>
+        <mat-card-actions *ngIf="t.status === 'upcoming'">
+          <button mat-raised-button color="primary" (click)="joinTournament(t, $event)">
+            <mat-icon>add</mat-icon> Join
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

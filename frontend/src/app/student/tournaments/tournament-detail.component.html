@@ -1,0 +1,140 @@
+<div class="tournament-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading tournament...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/tournaments">Back</button>
+  </div>
+
+  <div *ngIf="!loading && !error && tournament">
+    <div class="header">
+      <button mat-icon-button routerLink="/student/tournaments">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h2>{{ tournament.name }}</h2>
+        <div class="header-meta">
+          <mat-chip>{{ tournament.format | titlecase }}</mat-chip>
+          <mat-chip>{{ tournament.status | titlecase }}</mat-chip>
+          <span>{{ tournament.timeControl }}</span>
+          <span>{{ tournament.currentPlayers }}/{{ tournament.maxPlayers }} players</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary"
+                *ngIf="tournament.status === 'upcoming' && !tournament.isRegistered"
+                (click)="joinTournament()">
+          <mat-icon>add</mat-icon> Join
+        </button>
+        <button mat-stroked-button color="warn"
+                *ngIf="tournament.status === 'upcoming' && tournament.isRegistered"
+                (click)="leaveTournament()">
+          Leave
+        </button>
+        <button mat-raised-button color="accent"
+                *ngIf="tournament.status === 'active' && tournament.isRegistered">
+          <mat-icon>play_arrow</mat-icon> Play Next
+        </button>
+      </div>
+    </div>
+
+    <p class="description" *ngIf="tournament.description">{{ tournament.description }}</p>
+
+    <mat-tab-group>
+      <!-- Standings -->
+      <mat-tab label="Standings">
+        <div class="tab-content">
+          <table mat-table [dataSource]="tournament.standings" *ngIf="tournament.standings && tournament.standings.length > 0; else noStandings">
+            <ng-container matColumnDef="rank">
+              <th mat-header-cell *matHeaderCellDef>#</th>
+              <td mat-cell *matCellDef="let s">{{ s.rank }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="player">
+              <th mat-header-cell *matHeaderCellDef>Player</th>
+              <td mat-cell *matCellDef="let s">{{ s.playerName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="rating">
+              <th mat-header-cell *matHeaderCellDef>Rating</th>
+              <td mat-cell *matCellDef="let s">{{ s.rating }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef>Score</th>
+              <td mat-cell *matCellDef="let s">
+                <strong>{{ s.score }}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="record">
+              <th mat-header-cell *matHeaderCellDef>W/L/D</th>
+              <td mat-cell *matCellDef="let s">{{ s.wins }}/{{ s.losses }}/{{ s.draws }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="standingsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: standingsColumns;"></tr>
+          </table>
+          <ng-template #noStandings>
+            <p class="empty-tab">No standings available yet.</p>
+          </ng-template>
+        </div>
+      </mat-tab>
+
+      <!-- Pairings -->
+      <mat-tab label="Pairings">
+        <div class="tab-content">
+          <div class="round-selector" *ngIf="availableRounds.length > 0">
+            <span>Round:</span>
+            <mat-chip-set>
+              <mat-chip *ngFor="let r of availableRounds"
+                        [highlighted]="selectedRound === r"
+                        (click)="selectedRound = r">
+                {{ r }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <table mat-table [dataSource]="currentRoundPairings"
+                 *ngIf="currentRoundPairings.length > 0; else noPairings">
+            <ng-container matColumnDef="board">
+              <th mat-header-cell *matHeaderCellDef>Board</th>
+              <td mat-cell *matCellDef="let p">{{ p.board }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="white">
+              <th mat-header-cell *matHeaderCellDef>White</th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.whitePlayer.name }} ({{ p.whitePlayer.rating }})
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="result">
+              <th mat-header-cell *matHeaderCellDef>Result</th>
+              <td mat-cell *matCellDef="let p">
+                <span class="result">{{ p.result || '-' }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="black">
+              <th mat-header-cell *matHeaderCellDef>Black</th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.blackPlayer.name }} ({{ p.blackPlayer.rating }})
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="pairingsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: pairingsColumns;"></tr>
+          </table>
+          <ng-template #noPairings>
+            <p class="empty-tab">No pairings for this round yet.</p>
+          </ng-template>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

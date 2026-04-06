@@ -1,0 +1,27 @@
+.sidebar-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--accent-primary);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-details small {
+  color: var(--text-secondary);
+}
+
+.active-link {
+  background-color: var(--hover-bg) !important;
+  border-left: 3px solid var(--accent-primary);
+}

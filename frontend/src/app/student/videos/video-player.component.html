@@ -1,0 +1,50 @@
+<div class="video-player-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading video...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/videos">Back to Library</button>
+  </div>
+
+  <div *ngIf="!loading && !error && video">
+    <div class="nav-bar">
+      <button mat-icon-button routerLink="/student/videos">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span>Back to Library</span>
+    </div>
+
+    <!-- Video Player -->
+    <div class="video-wrapper">
+      <video controls [src]="video.url" class="video-element" preload="metadata">
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+
+    <!-- Video Info -->
+    <mat-card class="video-info-card">
+      <mat-card-header>
+        <mat-card-title>{{ video.title }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip>{{ video.level | titlecase }}</mat-chip>
+          <span *ngIf="video.category" class="category">{{ video.category }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="description">{{ video.description }}</p>
+        <div class="instructor-info">
+          <mat-icon>person</mat-icon>
+          <span>Instructor: {{ video.instructorId }}</span>
+        </div>
+        <div class="upload-date">
+          <mat-icon>calendar_today</mat-icon>
+          <span>Uploaded: {{ video.createdAt | date:'mediumDate' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

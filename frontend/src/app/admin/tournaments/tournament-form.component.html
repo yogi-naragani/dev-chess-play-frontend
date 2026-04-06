@@ -1,0 +1,66 @@
+<div class="tournament-form">
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Edit Tournament' : 'Create Tournament' }}</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <mat-card *ngIf="!loading">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tournament Name</mat-label>
+          <input matInput formControlName="name" placeholder="Enter tournament name">
+          <mat-error *ngIf="form.get('name')?.hasError('required')">Name is required</mat-error>
+          <mat-error *ngIf="form.get('name')?.hasError('minlength')">Minimum 3 characters</mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Format</mat-label>
+            <mat-select formControlName="format">
+              <mat-option *ngFor="let fmt of formats" [value]="fmt">{{ fmt }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('format')?.hasError('required')">Format is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Time Control</mat-label>
+            <mat-select formControlName="timeControl">
+              <mat-option *ngFor="let tc of timeControls" [value]="tc">{{ tc }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('timeControl')?.hasError('required')">Time control is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Max Players</mat-label>
+            <input matInput type="number" formControlName="maxPlayers" placeholder="16">
+            <mat-error *ngIf="form.get('maxPlayers')?.hasError('required')">Max players is required</mat-error>
+            <mat-error *ngIf="form.get('maxPlayers')?.hasError('min')">Minimum 2 players</mat-error>
+            <mat-error *ngIf="form.get('maxPlayers')?.hasError('max')">Maximum 256 players</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="startDate" placeholder="Select date">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="form.get('startDate')?.hasError('required')">Start date is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving">
+            <mat-spinner *ngIf="saving" diameter="20" class="button-spinner"></mat-spinner>
+            {{ isEditMode ? 'Update' : 'Create' }} Tournament
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

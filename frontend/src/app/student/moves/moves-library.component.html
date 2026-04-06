@@ -1,0 +1,77 @@
+<div class="moves-library-container">
+  <div class="page-header">
+    <h1>Move Sequences</h1>
+  </div>
+
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search move sequences</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (keyup.enter)="applyFilters()" placeholder="Search by title or opening...">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- Filters -->
+  <div class="filter-section">
+    <span class="filter-label">Category:</span>
+    <mat-chip-set>
+      <mat-chip *ngFor="let cat of categories"
+                [highlighted]="selectedCategory === cat"
+                (click)="toggleCategory(cat)">
+        {{ cat }}
+      </mat-chip>
+    </mat-chip-set>
+
+    <span class="filter-label">Difficulty:</span>
+    <mat-chip-set>
+      <mat-chip *ngFor="let diff of difficulties"
+                [highlighted]="selectedDifficulty === diff"
+                (click)="toggleDifficulty(diff)">
+        {{ diff | titlecase }}
+      </mat-chip>
+    </mat-chip-set>
+
+    <button mat-button (click)="clearFilters()" *ngIf="selectedCategory || selectedDifficulty || searchQuery">
+      <mat-icon>clear</mat-icon> Clear
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading sequences...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadSequences()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="sequences.length === 0" class="empty-state">
+      <mat-icon>library_books</mat-icon>
+      <h3>No Sequences Found</h3>
+      <p>Try adjusting your search or filters.</p>
+    </div>
+
+    <div class="sequence-grid">
+      <mat-card *ngFor="let seq of sequences" class="sequence-card"
+                [routerLink]="['/student/moves', seq.id]">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>menu_book</mat-icon>
+          <mat-card-title>{{ seq.title }}</mat-card-title>
+          <mat-card-subtitle>{{ seq.opening }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="description">{{ seq.description }}</p>
+          <div class="meta">
+            <span class="category-tag" *ngIf="seq.category">{{ seq.category }}</span>
+            <span class="difficulty-badge" [style.background-color]="getDifficultyColor(seq.difficulty)">
+              {{ seq.difficulty | titlecase }}
+            </span>
+            <span class="move-count">{{ (seq.moves ? seq.moves.length : 0) }} moves</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

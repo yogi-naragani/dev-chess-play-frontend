@@ -1,0 +1,120 @@
+<div class="peer-game-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading game...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/student/play">Back to Lobby</button>
+  </div>
+
+  <div *ngIf="!loading && !error && game" class="game-layout">
+    <!-- Opponent Clock (top) -->
+    <div class="clock-bar opponent-clock" [class.active]="!gameOver && (playerColor === 'w' ? moveHistory.length % 2 !== 0 : moveHistory.length % 2 === 0)">
+      <div class="player-info">
+        <mat-icon>person</mat-icon>
+        <span>{{ playerColor === 'w' ? game.blackPlayer.username : game.whitePlayer.username }}</span>
+        <span class="rating">({{ playerColor === 'w' ? game.blackPlayer.rating : game.whitePlayer.rating }})</span>
+      </div>
+      <div class="clock-display">
+        {{ formatClock(playerColor === 'w' ? blackTime : whiteTime) }}
+      </div>
+    </div>
+
+    <div class="game-content">
+      <!-- Board -->
+      <div class="board-section">
+        <app-chess-board
+          [fen]="game.fen"
+          [mode]="'play'"
+          [playerColor]="playerColor"
+          [flipped]="playerColor === 'b'"
+          [disabled]="gameOver"
+          (moveMade)="onMoveMade($event)">
+        </app-chess-board>
+      </div>
+
+      <!-- Side Panel -->
+      <div class="side-panel">
+        <!-- Move History -->
+        <mat-card class="moves-card">
+          <mat-card-header>
+            <mat-card-title>Moves</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="move-history">
+              <div *ngIf="moveHistory.length === 0" class="no-moves">No moves yet</div>
+              <div class="move-pairs">
+                <div *ngFor="let move of moveHistory; let i = index" class="move-entry">
+                  <span *ngIf="i % 2 === 0" class="move-num">{{ (i / 2 + 1) }}.</span>
+                  <span class="move-san">{{ move }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Actions -->
+        <mat-card class="actions-card" *ngIf="!gameOver">
+          <mat-card-content>
+            <div class="action-buttons">
+              <button mat-stroked-button color="warn" (click)="resign()">
+                <mat-icon>flag</mat-icon> Resign
+              </button>
+              <button mat-stroked-button (click)="offerDraw()">
+                <mat-icon>handshake</mat-icon> Draw
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card *ngIf="gameOver" class="game-over-card">
+          <mat-card-content>
+            <h3>Game Over</h3>
+            <p>{{ game.result | titlecase }}</p>
+            <button mat-raised-button color="primary" routerLink="/student/play">Back to Lobby</button>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Chat -->
+        <mat-card class="chat-card">
+          <mat-card-header>
+            <mat-card-title>Chat</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chat-messages">
+              <div *ngIf="chatMessages.length === 0" class="no-messages">No messages</div>
+              <div *ngFor="let msg of chatMessages" class="chat-msg">
+                <strong>{{ msg.sender }}:</strong> {{ msg.text }}
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <div class="chat-input">
+              <mat-form-field appearance="outline" class="chat-field">
+                <input matInput placeholder="Message..." [(ngModel)]="newMessage" (keyup.enter)="sendChatMessage()">
+              </mat-form-field>
+              <button mat-icon-button color="primary" (click)="sendChatMessage()">
+                <mat-icon>send</mat-icon>
+              </button>
+            </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Player Clock (bottom) -->
+    <div class="clock-bar player-clock" [class.active]="!gameOver && (playerColor === 'w' ? moveHistory.length % 2 === 0 : moveHistory.length % 2 !== 0)">
+      <div class="player-info">
+        <mat-icon>person</mat-icon>
+        <span>{{ playerColor === 'w' ? game.whitePlayer.username : game.blackPlayer.username }} (You)</span>
+        <span class="rating">({{ playerColor === 'w' ? game.whitePlayer.rating : game.blackPlayer.rating }})</span>
+      </div>
+      <div class="clock-display">
+        {{ formatClock(playerColor === 'w' ? whiteTime : blackTime) }}
+      </div>
+    </div>
+  </div>
+</div>

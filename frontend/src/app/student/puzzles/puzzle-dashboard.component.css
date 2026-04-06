@@ -1,0 +1,123 @@
+.puzzle-dashboard-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.puzzle-rating-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8eaf6;
+  padding: 8px 20px;
+  border-radius: 24px;
+}
+
+.puzzle-rating-display mat-icon {
+  color: #3f51b5;
+}
+
+.rating-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a237e;
+}
+
+.rating-label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.puzzle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.daily-puzzle-card app-chess-board {
+  max-width: 300px;
+  margin: 12px auto;
+}
+
+.puzzle-info {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.solved-chip {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.unsolved-chip {
+  background-color: #fff3e0 !important;
+  color: #e65100 !important;
+}
+
+.solved-icon {
+  color: #2e7d32 !important;
+}
+
+.failed-icon {
+  color: #c62828 !important;
+}
+
+.positive {
+  color: #2e7d32;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.negative {
+  color: #c62828;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.category-list {
+  padding: 8px 0;
+}
+
+.empty-state-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.empty-state-inline mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.empty-state-inline-text {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.38);
+  padding: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}

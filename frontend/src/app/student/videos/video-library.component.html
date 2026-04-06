@@ -1,0 +1,77 @@
+<div class="video-library-container">
+  <div class="page-header">
+    <h1>Video Library</h1>
+  </div>
+
+  <!-- Search Bar -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search videos</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (ngModelChange)="applyFilters()" placeholder="Search by title or description...">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- Filter Chips -->
+  <div class="filter-section">
+    <span class="filter-label">Category:</span>
+    <mat-chip-set>
+      <mat-chip *ngFor="let cat of categories"
+                [highlighted]="selectedCategory === cat"
+                (click)="toggleCategory(cat)">
+        {{ cat }}
+      </mat-chip>
+    </mat-chip-set>
+
+    <span class="filter-label">Level:</span>
+    <mat-chip-set>
+      <mat-chip *ngFor="let level of levels"
+                [highlighted]="selectedLevel === level"
+                (click)="toggleLevel(level)">
+        {{ level | titlecase }}
+      </mat-chip>
+    </mat-chip-set>
+
+    <button mat-button (click)="clearFilters()" *ngIf="selectedCategory || selectedLevel || searchQuery">
+      <mat-icon>clear</mat-icon> Clear Filters
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading videos...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadVideos()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div *ngIf="filteredVideos.length === 0" class="empty-state">
+      <mat-icon>video_library</mat-icon>
+      <h3>No Videos Found</h3>
+      <p>Try adjusting your search or filters.</p>
+    </div>
+
+    <div class="video-grid">
+      <mat-card *ngFor="let video of filteredVideos" class="video-card"
+                [routerLink]="['/student/videos', video.id]">
+        <div class="video-thumbnail">
+          <img *ngIf="video.thumbnailUrl" [src]="video.thumbnailUrl" [alt]="video.title">
+          <div *ngIf="!video.thumbnailUrl" class="thumbnail-placeholder">
+            <mat-icon>play_circle</mat-icon>
+          </div>
+          <span class="duration-badge">{{ formatDuration(video.duration) }}</span>
+        </div>
+        <mat-card-content>
+          <h3 class="video-title">{{ video.title }}</h3>
+          <p class="video-desc">{{ video.description }}</p>
+          <div class="video-meta">
+            <mat-chip class="level-chip">{{ video.level | titlecase }}</mat-chip>
+            <span class="category-tag" *ngIf="video.category">{{ video.category }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

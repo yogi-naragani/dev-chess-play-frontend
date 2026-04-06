@@ -1,0 +1,108 @@
+<div class="moves-database">
+  <div class="page-header">
+    <h1>Moves Database</h1>
+    <button mat-raised-button color="primary" (click)="addNew()">
+      <mat-icon>add</mat-icon>
+      Add New
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <!-- Filters -->
+      <div class="filters">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Category</mat-label>
+          <mat-select [(value)]="categoryFilter" (selectionChange)="onFilterChange()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Difficulty</mat-label>
+          <mat-select [(value)]="difficultyFilter" (selectionChange)="onFilterChange()">
+            <mat-option value="">All Difficulties</mat-option>
+            <mat-option *ngFor="let diff of difficulties" [value]="diff">{{ diff }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="dataSource" class="full-width">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Title</th>
+            <td mat-cell *matCellDef="let row">{{ row.title }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Category</th>
+            <td mat-cell *matCellDef="let row">{{ row.category }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="openingName">
+            <th mat-header-cell *matHeaderCellDef>Opening</th>
+            <td mat-cell *matCellDef="let row">{{ row.openingName || '-' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="difficulty">
+            <th mat-header-cell *matHeaderCellDef>Difficulty</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="difficulty-badge" [style.background-color]="getDifficultyColor(row.difficulty)">
+                {{ row.difficulty }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="moves">
+            <th mat-header-cell *matHeaderCellDef>Moves</th>
+            <td mat-cell *matCellDef="let row">{{ row.moves?.length || 0 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="tags">
+            <th mat-header-cell *matHeaderCellDef>Tags</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-chip-set>
+                <mat-chip *ngFor="let tag of row.tags?.slice(0, 3)" class="small-chip">{{ tag }}</mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="primary" (click)="editSequence(row)" matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteSequence(row)" matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div *ngIf="dataSource.data.length === 0" class="empty-state">
+          <mat-icon>library_books</mat-icon>
+          <p>No move sequences found</p>
+        </div>
+
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

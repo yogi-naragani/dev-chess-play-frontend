@@ -1,0 +1,18 @@
+<div class="sidebar-header" *ngIf="user">
+  <mat-icon class="avatar-icon">account_circle</mat-icon>
+  <div class="user-details">
+    <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+    <small>{{ user.userType | titlecase }}</small>
+  </div>
+</div>
+
+<mat-divider></mat-divider>
+
+<mat-nav-list>
+  <a mat-list-item *ngFor="let item of navItems"
+     [routerLink]="item.route"
+     routerLinkActive="active-link">
+    <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+    <span matListItemTitle>{{ item.label }}</span>
+  </a>
+</mat-nav-list>
