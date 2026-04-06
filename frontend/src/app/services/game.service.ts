@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { SocketService } from './socket.service';
+import { environment } from '../../environments/environment';
 
 export interface GameChallenge {
   id: string;
@@ -36,7 +37,7 @@ export interface OnlineStudent {
   providedIn: 'root'
 })
 export class GameService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

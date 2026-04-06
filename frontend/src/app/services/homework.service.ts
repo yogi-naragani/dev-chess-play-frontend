@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Homework {
   id: string;
@@ -57,7 +58,7 @@ export interface SubmissionListResponse {
   providedIn: 'root'
 })
 export class HomeworkService {
-  private readonly API_URL = 'http://localhost:3000/api/homework';
+  private readonly API_URL = `${environment.apiUrl}/homework`;
 
   constructor(private http: HttpClient) {}
 

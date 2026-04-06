@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable, Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface ChessMove {
   from: string;
@@ -21,7 +22,7 @@ export interface GameState {
 })
 export class SocketService {
   private socket: Socket | null = null;
-  private readonly SOCKET_URL = 'http://localhost:3000';
+  private readonly SOCKET_URL = environment.socketUrl;
   
   private moveSubject = new Subject<ChessMove>();
   private gameStateSubject = new Subject<GameState>();

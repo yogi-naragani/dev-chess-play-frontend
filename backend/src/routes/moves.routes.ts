@@ -1,6 +1,11 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { MoveSequence } from '../utils/mongodb.js';
 
+// Escape regex special chars to prevent ReDoS
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 interface CreateMoveSequenceBody {
   title: string;
   category: string;
@@ -21,10 +26,11 @@ export async function movesRoutes(app: FastifyInstance): Promise<void> {
     if (category) filter.category = category;
     if (difficulty) filter.difficulty = difficulty;
     if (search) {
+      const safeSearch = escapeRegex(search.slice(0, 200));
       filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { opening: { $regex: search, $options: 'i' } },
-        { tags: { $in: [new RegExp(search, 'i')] } }
+        { title: { $regex: safeSearch, $options: 'i' } },
+        { opening: { $regex: safeSearch, $options: 'i' } },
+        { tags: { $in: [new RegExp(safeSearch, 'i')] } }
       ];
     }
 

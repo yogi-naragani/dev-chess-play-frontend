@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PaginatedResponse, User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 export interface Instructor {
   id: string;
@@ -97,7 +98,7 @@ export interface AnalyticsData {
   providedIn: 'root'
 })
 export class AdminService {
-  private readonly API_BASE_URL = 'http://localhost:3000/api';
+  private readonly API_BASE_URL = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

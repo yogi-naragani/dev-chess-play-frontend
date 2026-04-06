@@ -3,12 +3,13 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_BASE_URL = 'http://localhost:3000/api';
+  private readonly API_BASE_URL = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -69,6 +70,17 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
+  }
+
+  refreshToken(): Observable<{ accessToken: string }> {
+    const refreshToken = this.getRefreshToken();
+    return this.http.post<{ accessToken: string }>(`${this.API_BASE_URL}/auth/refresh`, { refreshToken })
+      .pipe(
+        tap((response) => {
+          localStorage.setItem('accessToken', response.accessToken);
+        }),
+        catchError(this.handleError)
+      );
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {

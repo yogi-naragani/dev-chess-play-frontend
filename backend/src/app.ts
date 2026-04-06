@@ -4,6 +4,8 @@ import fjwt from '@fastify/jwt';
 import multipart from '@fastify/multipart';
 import fstatic from '@fastify/static';
 import formbody from '@fastify/formbody';
+import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -46,8 +48,24 @@ export async function buildApp(): Promise<{ app: FastifyInstance; io: Server }> 
     credentials: true
   });
 
+  // Security headers
+  await app.register(helmet, {
+    contentSecurityPolicy: false // Disable CSP for development
+  });
+
+  // Rate limiting
+  await app.register(rateLimit, {
+    max: 100,
+    timeWindow: '1 minute'
+  });
+
+  // JWT - require secret in production
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
   await app.register(fjwt, {
-    secret: process.env.JWT_SECRET || 'chess-academy-secret'
+    secret: jwtSecret || 'chess-academy-dev-secret-change-in-production'
   });
 
   await app.register(multipart, {

@@ -67,9 +67,9 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
   // ==================== INSTRUCTORS ====================
 
   app.get('/instructors', async (request: FastifyRequest<{ Querystring: ListQuery }>, reply: FastifyReply) => {
-    const page = parseInt(request.query.page || '1');
-    const limit = parseInt(request.query.limit || '20');
-    const search = request.query.search;
+    const page = Math.max(1, parseInt(request.query.page || '1') || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(request.query.limit || '20') || 20));
+    const search = request.query.search?.slice(0, 200);
 
     const where: any = { userType: 'INSTRUCTOR' as const };
     if (search) {
@@ -150,9 +150,9 @@ export async function adminRoutes(app: FastifyInstance): Promise<void> {
   // ==================== STUDENTS ====================
 
   app.get('/students', async (request: FastifyRequest<{ Querystring: ListQuery }>, reply: FastifyReply) => {
-    const page = parseInt(request.query.page || '1');
-    const limit = parseInt(request.query.limit || '20');
-    const search = request.query.search;
+    const page = Math.max(1, parseInt(request.query.page || '1') || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(request.query.limit || '20') || 20));
+    const search = request.query.search?.slice(0, 200);
 
     const where: any = { userType: 'STUDENT' as const };
     if (search) {

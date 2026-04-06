@@ -7,6 +7,13 @@ import { v4 as uuid } from 'uuid';
 
 const prisma = new PrismaClient();
 
+const ALLOWED_VIDEO_MIME_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+
+function sanitizeFilename(filename: string): string {
+  // Remove path traversal characters and any non-alphanumeric except dots, hyphens, underscores
+  return path.basename(filename).replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
 export async function videoRoutes(app: FastifyInstance): Promise<void> {
   app.addHook('preHandler', app.authenticate);
 
@@ -43,8 +50,17 @@ export async function videoRoutes(app: FastifyInstance): Promise<void> {
       return reply.status(400).send({ message: 'No file uploaded' });
     }
 
+    // Validate MIME type
+    if (!ALLOWED_VIDEO_MIME_TYPES.includes(data.mimetype)) {
+      return reply.status(400).send({
+        message: `Invalid file type: ${data.mimetype}. Allowed types: ${ALLOWED_VIDEO_MIME_TYPES.join(', ')}`
+      });
+    }
+
+    // Sanitize filename and extract extension
+    const sanitized = sanitizeFilename(data.filename);
+    const ext = path.extname(sanitized);
     const fileId = uuid();
-    const ext = path.extname(data.filename);
     const fileName = `${fileId}${ext}`;
     const uploadDir = path.join(process.cwd(), 'uploads', 'videos');
 
@@ -58,7 +74,7 @@ export async function videoRoutes(app: FastifyInstance): Promise<void> {
 
     // Get metadata from fields
     const fields = data.fields as any;
-    const title = fields.title?.value || data.filename;
+    const title = fields.title?.value || sanitized;
     const description = fields.description?.value || '';
     const category = fields.category?.value || 'general';
     const level = fields.level?.value || 'beginner';
@@ -89,12 +105,18 @@ export async function videoRoutes(app: FastifyInstance): Promise<void> {
     return reply.send(video);
   });
 
-  // Delete video (instructor/admin)
+  // Delete video (owner instructor or admin only)
   app.delete('/:id', {
     preHandler: [app.requireRole('INSTRUCTOR', 'ADMIN')]
   }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    const user = request.user as { id: string; userType: string };
     const video = await prisma.video.findUnique({ where: { id: request.params.id } });
     if (!video) return reply.status(404).send({ message: 'Video not found' });
+
+    // Only the uploader or an admin can delete
+    if (user.userType !== 'ADMIN' && video.uploadedById !== user.id) {
+      return reply.status(403).send({ message: 'You can only delete your own videos' });
+    }
 
     // Delete file from disk
     const fullPath = path.join(process.cwd(), video.filePath);

@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { environment } from '../../environments/environment';
 
 export interface ChatContact {
   id: string;
@@ -29,8 +30,8 @@ export interface ChatMessage {
   providedIn: 'root'
 })
 export class ChatService implements OnDestroy {
-  private apiUrl = 'http://localhost:3000/api';
-  private socketUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
+  private socketUrl = environment.socketUrl;
   private socket: Socket | null = null;
 
   private messagesSubject = new Subject<ChatMessage>();

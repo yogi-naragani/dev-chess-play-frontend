@@ -6,6 +6,14 @@ const RATING_RANGE = 200; // Match players within 200 rating points
 export function matchmakingHandler(io: Server, socket: Socket): void {
   // Challenge a specific player
   socket.on('challengePlayer', (data: { targetId: string; timeControl: number }) => {
+    if (!socket.data.userId) {
+      socket.emit('challengeError', { message: 'Not authenticated' });
+      return;
+    }
+    if (data.targetId === socket.data.userId) {
+      socket.emit('challengeError', { message: 'Cannot challenge yourself' });
+      return;
+    }
     const target = onlineUsers.get(data.targetId);
     if (!target) {
       socket.emit('challengeError', { message: 'Player is not online' });
@@ -21,6 +29,7 @@ export function matchmakingHandler(io: Server, socket: Socket): void {
 
   // Accept challenge
   socket.on('acceptChallenge', (data: { challengerId: string; timeControl: number }) => {
+    if (!socket.data.userId) return;
     const challenger = onlineUsers.get(data.challengerId);
     if (!challenger) {
       socket.emit('challengeError', { message: 'Challenger is no longer online' });
@@ -44,6 +53,7 @@ export function matchmakingHandler(io: Server, socket: Socket): void {
 
   // Decline challenge
   socket.on('declineChallenge', (data: { challengerId: string }) => {
+    if (!socket.data.userId) return;
     const challenger = onlineUsers.get(data.challengerId);
     if (challenger) {
       io.to(challenger.socketId).emit('challengeDeclined', {
@@ -55,6 +65,10 @@ export function matchmakingHandler(io: Server, socket: Socket): void {
 
   // Join matchmaking queue
   socket.on('joinQueue', (data: { rating: number; timeControl?: number }) => {
+    if (!socket.data.userId) {
+      socket.emit('queueError', { message: 'Not authenticated' });
+      return;
+    }
     // Check if already in queue
     const existing = matchmakingQueue.findIndex(q => q.userId === socket.data.userId);
     if (existing !== -1) {
@@ -95,6 +109,7 @@ export function matchmakingHandler(io: Server, socket: Socket): void {
 
   // Leave matchmaking queue
   socket.on('leaveQueue', () => {
+    if (!socket.data.userId) return;
     const index = matchmakingQueue.findIndex(q => q.userId === socket.data.userId);
     if (index !== -1) {
       matchmakingQueue.splice(index, 1);

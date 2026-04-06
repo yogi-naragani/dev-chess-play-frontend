@@ -1,9 +1,20 @@
 import { Server, Socket } from 'socket.io';
-import { ChatMessage } from '../utils/mongodb.js';
+import { ChatMessage, ChatRoom } from '../utils/mongodb.js';
+
+async function isRoomMember(roomId: string, userId: string): Promise<boolean> {
+  const room = await ChatRoom.findOne({ _id: roomId, participants: userId });
+  return !!room;
+}
 
 export function chatHandler(io: Server, socket: Socket): void {
   // Join a chat room
-  socket.on('joinChatRoom', (roomId: string) => {
+  socket.on('joinChatRoom', async (roomId: string) => {
+    if (!socket.data.userId) return;
+    const allowed = await isRoomMember(roomId, socket.data.userId);
+    if (!allowed) {
+      socket.emit('chatError', { message: 'You are not a member of this chat room' });
+      return;
+    }
     socket.join(`chat:${roomId}`);
   });
 
@@ -14,6 +25,13 @@ export function chatHandler(io: Server, socket: Socket): void {
 
   // Send message
   socket.on('sendMessage', async (data: { roomId: string; content: string; type?: string }) => {
+    if (!socket.data.userId) return;
+    const allowed = await isRoomMember(data.roomId, socket.data.userId);
+    if (!allowed) {
+      socket.emit('chatError', { message: 'You are not a member of this chat room' });
+      return;
+    }
+
     const message = await ChatMessage.create({
       roomId: data.roomId,
       senderId: socket.data.userId,
@@ -34,7 +52,11 @@ export function chatHandler(io: Server, socket: Socket): void {
   });
 
   // Typing indicator
-  socket.on('typing', (data: { roomId: string }) => {
+  socket.on('typing', async (data: { roomId: string }) => {
+    if (!socket.data.userId) return;
+    const allowed = await isRoomMember(data.roomId, socket.data.userId);
+    if (!allowed) return;
+
     socket.to(`chat:${data.roomId}`).emit('userTyping', {
       userId: socket.data.userId,
       username: socket.data.username,
@@ -42,7 +64,11 @@ export function chatHandler(io: Server, socket: Socket): void {
     });
   });
 
-  socket.on('stopTyping', (data: { roomId: string }) => {
+  socket.on('stopTyping', async (data: { roomId: string }) => {
+    if (!socket.data.userId) return;
+    const allowed = await isRoomMember(data.roomId, socket.data.userId);
+    if (!allowed) return;
+
     socket.to(`chat:${data.roomId}`).emit('userStoppedTyping', {
       userId: socket.data.userId,
       roomId: data.roomId

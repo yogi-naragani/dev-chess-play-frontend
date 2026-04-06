@@ -18,9 +18,52 @@ interface RegisterBody {
   userType: 'ADMIN' | 'INSTRUCTOR' | 'STUDENT';
 }
 
+// Fastify JSON Schemas for request validation
+const loginSchema = {
+  body: {
+    type: 'object',
+    required: ['usernameOrEmail', 'password'],
+    properties: {
+      usernameOrEmail: { type: 'string', minLength: 1, maxLength: 255 },
+      password: { type: 'string', minLength: 8, maxLength: 128 }
+    },
+    additionalProperties: false
+  }
+};
+
+const registerSchema = {
+  body: {
+    type: 'object',
+    required: ['username', 'email', 'password', 'firstName', 'lastName', 'userType'],
+    properties: {
+      username: { type: 'string', minLength: 3, maxLength: 50, pattern: '^[a-zA-Z0-9_]+$' },
+      email: { type: 'string', format: 'email', maxLength: 255 },
+      password: { type: 'string', minLength: 8, maxLength: 128 },
+      firstName: { type: 'string', minLength: 1, maxLength: 100 },
+      lastName: { type: 'string', minLength: 1, maxLength: 100 },
+      userType: { type: 'string', enum: ['ADMIN', 'INSTRUCTOR', 'STUDENT'] }
+    },
+    additionalProperties: false
+  }
+};
+
+const refreshSchema = {
+  body: {
+    type: 'object',
+    required: ['refreshToken'],
+    properties: {
+      refreshToken: { type: 'string', minLength: 1 }
+    },
+    additionalProperties: false
+  }
+};
+
 export async function authRoutes(app: FastifyInstance): Promise<void> {
-  // Login
-  app.post('/login', async (request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply) => {
+  // Login - with stricter rate limit (5 attempts per minute)
+  app.post('/login', {
+    schema: loginSchema,
+    config: { rateLimit: { max: 5, timeWindow: '1 minute' } }
+  }, async (request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply) => {
     const { usernameOrEmail, password } = request.body;
 
     const user = await prisma.user.findFirst({
@@ -62,7 +105,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
   });
 
   // Register (admin creates users, or self-registration)
-  app.post('/register', async (request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply) => {
+  app.post('/register', { schema: registerSchema }, async (request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply) => {
     const { username, email, password, firstName, lastName, userType } = request.body;
 
     // Check if user exists
@@ -110,7 +153,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
   });
 
   // Refresh token
-  app.post('/refresh', async (request: FastifyRequest<{ Body: { refreshToken: string } }>, reply: FastifyReply) => {
+  app.post('/refresh', { schema: refreshSchema }, async (request: FastifyRequest<{ Body: { refreshToken: string } }>, reply: FastifyReply) => {
     const { refreshToken } = request.body;
 
     try {

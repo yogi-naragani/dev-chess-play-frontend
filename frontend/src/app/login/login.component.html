@@ -30,7 +30,7 @@
             Password is required
           </mat-error>
           <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-            Password must be at least 6 characters
+            Password must be at least 8 characters
           </mat-error>
         </mat-form-field>
 
@@ -40,7 +40,7 @@
         </div>
 
         <button mat-raised-button color="primary" type="submit"
-                class="login-button full-width" [disabled]="isLoading">
+                class="login-button full-width" [disabled]="isLoading || loginForm.invalid">
           <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
           <span *ngIf="!isLoading">Sign In</span>
           <span *ngIf="isLoading">Signing in...</span>

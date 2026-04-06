@@ -48,7 +48,7 @@ export class StudentFormComponent implements OnInit {
     this.form = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', this.isEditMode ? [] : [Validators.required, Validators.minLength(6)]],
+      password: ['', this.isEditMode ? [] : [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)]],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required]
     });

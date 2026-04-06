@@ -141,6 +141,7 @@ model LessonStudent {
   student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([lessonId, studentId])
+  @@index([studentId])
   @@map("lesson_students")
 }
 
@@ -163,6 +164,10 @@ model Game {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([whiteId])
+  @@index([blackId])
+  @@index([createdAt])
+  @@index([tournamentId])
   @@map("games")
 }
 
@@ -184,6 +189,8 @@ model Video {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([uploadedById])
+  @@index([category])
   @@map("videos")
 }
 
@@ -203,6 +210,8 @@ model Assignment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([assignedById])
+  @@index([dueDate])
   @@map("assignments")
 }
 
@@ -221,6 +230,7 @@ model Submission {
   gradedAt    DateTime?
 
   @@unique([assignmentId, studentId])
+  @@index([studentId])
   @@map("submissions")
 }
 
@@ -257,5 +267,6 @@ model TournamentEntry {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([tournamentId, userId])
+  @@index([userId])
   @@map("tournament_entries")
 }

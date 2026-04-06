@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
 import { gameHandler } from './game.handler.js';
 import { matchmakingHandler } from './matchmaking.handler.js';
 import { chatHandler } from './chat.handler.js';
@@ -12,19 +13,34 @@ export const onlineUsers = new Map<string, { socketId: string; username: string 
 export const matchmakingQueue: Array<{ userId: string; username: string; rating: number; socketId: string }> = [];
 
 export function setupSocketHandlers(io: Server): void {
+  const jwtSecret = process.env.JWT_SECRET;
+
+  // Authenticate socket connections via JWT middleware
+  io.use((socket, next) => {
+    const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization?.replace('Bearer ', '');
+    if (!token) {
+      return next(new Error('Authentication required: no token provided'));
+    }
+    if (!jwtSecret) {
+      return next(new Error('Server configuration error'));
+    }
+    try {
+      const decoded = jwt.verify(token, jwtSecret) as { id: string; username: string; userType: string };
+      socket.data.userId = decoded.id;
+      socket.data.username = decoded.username;
+      socket.data.userType = decoded.userType;
+      next();
+    } catch {
+      return next(new Error('Authentication failed: invalid token'));
+    }
+  });
+
   io.on('connection', (socket: Socket) => {
-    console.log(`Client connected: ${socket.id}`);
+    console.log(`Client connected: ${socket.id} (user: ${socket.data.username})`);
 
-    // Auth data should be sent on connection
-    socket.on('authenticate', (data: { userId: string; username: string }) => {
-      onlineUsers.set(data.userId, { socketId: socket.id, username: data.username });
-      socket.data.userId = data.userId;
-      socket.data.username = data.username;
-
-      // Broadcast online status
-      io.emit('userOnline', { userId: data.userId, username: data.username });
-      console.log(`User authenticated: ${data.username} (${data.userId})`);
-    });
+    // Register user as online (already authenticated via middleware)
+    onlineUsers.set(socket.data.userId, { socketId: socket.id, username: socket.data.username });
+    io.emit('userOnline', { userId: socket.data.userId, username: socket.data.username });
 
     // Register handlers
     gameHandler(io, socket);

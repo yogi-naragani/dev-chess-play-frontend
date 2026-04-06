@@ -66,14 +66,37 @@ export class HomeworkFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      description: [''],
+      title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      description: ['', [Validators.maxLength(2000)]],
       type: ['solve_position', Validators.required],
       fen: [''],
       videoId: [''],
       gameId: [''],
       dueDate: [null, Validators.required],
       assignedStudentIds: [[] as string[]]
+    });
+
+    // Conditional validation based on assignment type
+    this.form.get('type')?.valueChanges.subscribe(type => {
+      const fenCtrl = this.form.get('fen');
+      const videoCtrl = this.form.get('videoId');
+      const gameCtrl = this.form.get('gameId');
+
+      fenCtrl?.clearValidators();
+      videoCtrl?.clearValidators();
+      gameCtrl?.clearValidators();
+
+      if (type === 'solve_position') {
+        fenCtrl?.setValidators([Validators.required]);
+      } else if (type === 'watch_video') {
+        videoCtrl?.setValidators([Validators.required]);
+      } else if (type === 'review_game') {
+        gameCtrl?.setValidators([Validators.required]);
+      }
+
+      fenCtrl?.updateValueAndValidity();
+      videoCtrl?.updateValueAndValidity();
+      gameCtrl?.updateValueAndValidity();
     });
 
     this.homeworkId = this.route.snapshot.paramMap.get('id');
